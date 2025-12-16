@@ -9,7 +9,9 @@
 ## 下载项目
 ```bash
 git clone https://gitcode.com/Hel1um_HE/trade_platform.git
-```
+```   
+或者   
+右上角“下载Zip”之后解压
 ## 运行项目
 在clone本仓库之后，双击打开项目文件夹，找到`index.html`文件，用浏览器打开即可。
 
