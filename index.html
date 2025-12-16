@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园交易平台</title>
+    <!-- 引入本地Bootstrap CSS -->
+    <link rel="stylesheet" href="./res/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            height: 100vh;
+            background-color: #007bff;
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .sidebar h3 {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+
+        .sidebar .nav-link {
+            color: white;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 0;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
+
+        .sidebar .publish-btn {
+            margin: 20px;
+            background-color: white;
+            color: #007bff;
+            border: none;
+            width: calc(100% - 40px);
+        }
+
+        .sidebar .publish-btn:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* 主内容区样式 */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        /* 头部样式 */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .search-box {
+            width: 500px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .avatar:hover::after {
+            content: '点击进入个人主页';
+            position: absolute;
+            bottom: -30px;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        /* 内容主体样式 */
+        .content-body {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            min-height: 600px;
+        }
+
+        /* 私聊页面样式 */
+        .chat-container {
+            display: flex;
+            height: 600px;
+        }
+
+        .chat-list {
+            width: 25%;
+            border-right: 1px solid #e9ecef;
+            padding-right: 20px;
+            overflow-y: auto;
+        }
+
+        .chat-main {
+            width: 75%;
+            padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+            margin-bottom: 20px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+        }
+
+        /* 商品卡片样式 */
+        .product-card {
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-price {
+            color: #dc3545;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 侧边栏 -->
+        <div class="sidebar col-md-2" style="width: 250px;">
+            <h3>校园交易平台</h3>
+            <nav class="nav flex-column">
+                <router-link to="/home" class="nav-link" active-class="active">首页</router-link>
+                <router-link to="/chat" class="nav-link" active-class="active">私聊</router-link>
+                <router-link to="/my" class="nav-link" active-class="active">我的</router-link>
+                <button class="btn btn-primary publish-btn mt-3" @click="goToPublish">发布商品</button>
+            </nav>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 头部 -->
+            <div class="header">
+                <div class="search-box">
+                    <input type="text" class="form-control" placeholder="搜索商品或用户">
+                </div>
+                <div class="avatar" @click="goToMy">
+                    {{ userInfo ? userInfo.nickname.charAt(0) : '头' }}
+                </div>
+            </div>
+
+            <!-- 内容主体 -->
+            <div class="content-body">
+                <router-view></router-view>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入本地Vue.js -->
+    <script src="./res/vue.js"></script>
+    <!-- 引入本地Vue Router -->
+    <script src="./res/vue-router.js"></script>
+    <!-- 引入本地Bootstrap JS -->
+    <script src="./res/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 引入组件文件 -->
+    <script src="./components/home.js"></script>
+    <script src="./components/chat.js"></script>
+    <script src="./components/my.js"></script>
+    <script src="./components/publish.js"></script>
+    <script src="./components/product.js"></script>
+    <script src="./components/seller.js"></script>
+    <script>
+        // 检查用户是否已登录
+        const checkLogin = () => {
+            const storedUser = localStorage.getItem('userInfo');
+            if (!storedUser) {
+                alert('请先登录');
+                window.location.href = 'login.html';
+                return false;
+            }
+            const userInfo = JSON.parse(storedUser);
+            if (!userInfo.isVerified) {
+                alert('请先完成身份认证以激活账户');
+                window.location.href = 'verify.html';
+                return false;
+            }
+            return true;
+        };
+
+        // 安装Vue Router插件
+        Vue.use(VueRouter);
+
+        // 检查登录状态
+        checkLogin();
+
+        // 创建Vue实例
+        new Vue({
+            el: '#app',
+            router: new VueRouter({
+                routes: [
+                    {
+                        path: '/',
+                        redirect: '/home'
+                    },
+                    {
+                        path: '/home',
+                        component: HomeComponent
+                    },
+                    {
+                        path: '/chat',
+                        component: ChatComponent
+                    },
+                    {
+                        path: '/my',
+                        component: MyComponent
+                    },
+                    {
+                        path: '/publish',
+                        component: PublishComponent
+                    },
+                    {
+                        path: '/product/:id',
+                        component: ProductComponent
+                    },
+                    {
+                        path: '/seller/:id',
+                        component: SellerComponent
+                    }
+                ]
+            }),
+            data: {
+                userInfo: null
+            },
+            mounted() {
+                // 获取用户信息
+                const storedUser = localStorage.getItem('userInfo');
+                if (storedUser) {
+                    this.userInfo = JSON.parse(storedUser);
+                }
+            },
+            methods: {
+                goToPublish() {
+                    this.$router.push('/publish');
+                },
+                goToMy() {
+                    this.$router.push('/my');
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
