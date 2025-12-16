@@ -116,11 +116,12 @@
                         setTimeout(() => {
                             this.loading = false;
                             // 保存用户信息到localStorage，实际项目中应该发送到服务器
-                            localStorage.setItem('userInfo', JSON.stringify({
-                                phone: this.form.phone,
-                                nickname: this.form.nickname,
-                                isVerified: false
-                            }));
+                localStorage.setItem('userInfo', JSON.stringify({
+                    id: Date.now(), // 添加唯一ID
+                    phone: this.form.phone,
+                    nickname: this.form.nickname,
+                    isVerified: false
+                }));
                             // 跳转到身份认证页面
                             window.location.href = 'verify.html';
                         }, 1500);

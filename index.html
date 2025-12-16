@@ -187,6 +187,42 @@
             font-weight: bold;
             font-size: 18px;
         }
+        
+        /* 交易进度样式 */
+        .circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #dee2e6;
+            background-color: white;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .circle.completed {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        
+        .line {
+            width: 50px;
+            height: 2px;
+            background-color: #dee2e6;
+            transition: all 0.3s ease;
+        }
+        
+        .line.completed {
+            background-color: #28a745;
+        }
+        
+        /* 模态框样式调整 */
+        .modal {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-dialog {
+            margin-top: 100px;
+        }
     </style>
 </head>
 
@@ -199,6 +235,7 @@
                 <router-link to="/home" class="nav-link" active-class="active">首页</router-link>
                 <router-link to="/chat" class="nav-link" active-class="active">私聊</router-link>
                 <router-link to="/my" class="nav-link" active-class="active">我的</router-link>
+                <router-link to="/seller-orders" class="nav-link" active-class="active">卖家订单</router-link>
                 <button class="btn btn-primary publish-btn mt-3" @click="goToPublish">发布商品</button>
             </nav>
         </div>
@@ -235,6 +272,7 @@
     <script src="./components/publish.js"></script>
     <script src="./components/product.js"></script>
     <script src="./components/seller.js"></script>
+    <script src="./components/seller-orders.js"></script>
     <script>
         // 检查用户是否已登录
         const checkLogin = () => {
@@ -291,6 +329,10 @@
                     {
                         path: '/seller/:id',
                         component: SellerComponent
+                    },
+                    {
+                        path: '/seller-orders',
+                        component: SellerOrdersComponent
                     }
                 ]
             }),
@@ -302,6 +344,11 @@
                 const storedUser = localStorage.getItem('userInfo');
                 if (storedUser) {
                     this.userInfo = JSON.parse(storedUser);
+                    // 确保用户有唯一ID
+                    if (!this.userInfo.id) {
+                        this.userInfo.id = Date.now();
+                        localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
+                    }
                 }
             },
             methods: {

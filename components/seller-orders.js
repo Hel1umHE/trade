@@ -1,0 +1,288 @@
+// 卖家订单跟踪组件
+const SellerOrdersComponent = {
+    template: `
+        <div>
+            <h4>卖家订单管理</h4>
+            <div class="mt-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h6>我的订单</h6>
+                    </div>
+                    <div class="card-body">
+                        <!-- 当没有订单时显示 -->
+                        <div v-if="sellerOrders.length === 0">
+                            <p>您还没有卖出商品，暂无订单</p>
+                        </div>
+                        <!-- 当有订单时显示 -->
+                        <div v-else>
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>订单号</th>
+                                        <th>商品信息</th>
+                                        <th>买家</th>
+                                        <th>订单状态</th>
+                                        <th>下单时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="order in sellerOrders" :key="order.id">
+                                        <td>{{ order.id }}</td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img :src="order.productImage" alt="商品图片" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; margin-right: 10px;">
+                                                <div>
+                                                    <div>{{ order.productTitle }}</div>
+                                                    <div class="text-muted product-price">{{ order.productPrice }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ order.buyerName }}</td>
+                                        <td>
+                                            <span class="badge" :class="getStatusClass(order.status)">{{ order.status }}</span>
+                                        </td>
+                                        <td>{{ formatDate(order.createdAt) }}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info" @click="showTradeProgress(order)">查看详情</button>
+                                            <button class="btn btn-sm btn-danger ml-1" @click="deleteOrder(order)">删除订单</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 交易进度模态框 -->
+            <div v-if="showProgressModal" class="modal" tabindex="-1" role="dialog" :class="{ show: showProgressModal }" style="display: block;">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">订单详情 - 订单号：{{ currentOrder?.id }}</h5>
+                            <button type="button" class="btn-close" @click="showProgressModal = false"></button>
+                        </div>
+                        <div class="modal-body" v-if="currentOrder">
+                            <h6>{{ currentOrder.productTitle }}</h6>
+                            <p class="text-muted">价格：{{ currentOrder.productPrice }}</p>
+                            
+                            <div class="mt-4">
+                                <h7>订单状态：</h7>
+                                <span class="badge" :class="getStatusClass(currentOrder.status)">{{ currentOrder.status }}</span>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h7>订单进度：</h7>
+                                <div class="mt-2">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <div class="circle" :class="{ completed: currentOrder.hasPaid }"></div>
+                                        <div class="line" :class="{ completed: currentOrder.hasPaid && currentOrder.hasShipped }"></div>
+                                        <div class="circle" :class="{ completed: currentOrder.hasShipped }"></div>
+                                        <div class="line" :class="{ completed: currentOrder.hasShipped && currentOrder.hasReceived }"></div>
+                                        <div class="circle" :class="{ completed: currentOrder.hasReceived }"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>买家已付款</span>
+                                        <span>卖家已发货</span>
+                                        <span>买家已收货</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h7>进度详情：</h7>
+                                <ul class="list-group mt-2">
+                                    <li class="list-group-item">
+                                        <span>买家是否已付款：</span>
+                                        <span :class="{ 'text-success': currentOrder.hasPaid, 'text-danger': !currentOrder.hasPaid }">
+                                            {{ currentOrder.hasPaid ? '是' : '否' }}
+                                        </span>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <span>卖家是否已发货：</span>
+                                        <span :class="{ 'text-success': currentOrder.hasShipped, 'text-danger': !currentOrder.hasShipped }">
+                                            {{ currentOrder.hasShipped ? '是' : '否' }}
+                                        </span>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <span>买家是否已收货：</span>
+                                        <span :class="{ 'text-success': currentOrder.hasReceived, 'text-danger': !currentOrder.hasReceived }">
+                                            {{ currentOrder.hasReceived ? '是' : '否' }}
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <!-- 操作按钮 -->
+                            <div class="mt-4">
+                                <h7>操作：</h7>
+                                <div class="mt-2">
+                                    <!-- 卖家操作 -->
+                                    <template v-if="isSeller(currentOrder)">
+                                        <button v-if="currentOrder.hasPaid && !currentOrder.hasShipped" class="btn btn-sm btn-warning me-2" @click="updateTradeStatus(currentOrder, 'hasShipped')">确认发货</button>
+                                        <button v-if="!currentOrder.hasShipped && currentOrder.status !== '交易取消'" class="btn btn-sm btn-danger me-2" @click="cancelTrade(currentOrder)">取消交易</button>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @click="showProgressModal = false">关闭</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 模态框背景 -->
+            <div v-if="showProgressModal" class="modal-backdrop fade show"></div>
+        </div>
+    `,
+    data() {
+        return {
+            sellerOrders: [],
+            showProgressModal: false,
+            currentOrder: null
+        };
+    },
+    mounted() {
+        this.loadSellerOrders();
+    },
+    methods: {
+        loadSellerOrders() {
+            // 获取当前用户信息
+            const storedUser = localStorage.getItem('userInfo');
+            if (!storedUser) {
+                return;
+            }
+            const userInfo = JSON.parse(storedUser);
+            const currentUserId = parseInt(userInfo.id);
+
+            // 从 localStorage 获取所有购买记录
+            const storedRecords = localStorage.getItem('purchaseRecords');
+            if (storedRecords) {
+                const allRecords = JSON.parse(storedRecords);
+                // 筛选出当前用户作为卖家的记录
+                this.sellerOrders = allRecords.filter(record => parseInt(record.sellerId) === currentUserId);
+            }
+        },
+        showTradeProgress(order) {
+            this.currentOrder = order;
+            this.showProgressModal = true;
+        },
+        updateTradeStatus(order, statusKey) {
+            // 更新交易状态
+            order[statusKey] = true;
+
+            // 更新交易状态文本
+            let isCompleted = false;
+            if (order.hasPaid && !order.hasShipped) {
+                order.status = "已付款，待发货";
+            } else if (order.hasPaid && order.hasShipped && !order.hasReceived) {
+                order.status = "已发货，待收货";
+            } else if (order.hasPaid && order.hasShipped && order.hasReceived) {
+                order.status = "交易完成";
+                isCompleted = true;
+            }
+
+            // 更新localStorage中的数据
+            const storedRecords = localStorage.getItem('purchaseRecords');
+            if (storedRecords) {
+                let records = JSON.parse(storedRecords);
+                const index = records.findIndex(r => r.id === order.id);
+                if (index !== -1) {
+                    records[index] = order;
+                    localStorage.setItem('purchaseRecords', JSON.stringify(records));
+                    // 重新加载订单
+                    this.loadSellerOrders();
+                    // 显示成功消息
+                    alert('操作成功！');
+                }
+            }
+
+            // 交易完成后删除对应商品
+            if (isCompleted) {
+                this.deleteProductAfterTrade(order.productId);
+            }
+        },
+        deleteProductAfterTrade(productId) {
+            // 从localStorage获取所有商品
+            const storedProducts = localStorage.getItem('products');
+            if (storedProducts) {
+                let products = JSON.parse(storedProducts);
+                // 找到并删除对应的商品
+                const updatedProducts = products.filter(p => p.id !== productId);
+                localStorage.setItem('products', JSON.stringify(updatedProducts));
+            }
+        },
+        deleteOrder(order) {
+            if (confirm('确定要删除这笔订单吗？')) {
+                // 从localStorage中删除订单
+                const storedRecords = localStorage.getItem('purchaseRecords');
+                if (storedRecords) {
+                    let records = JSON.parse(storedRecords);
+                    // 过滤掉要删除的订单
+                    const updatedRecords = records.filter(r => r.id !== order.id);
+                    localStorage.setItem('purchaseRecords', JSON.stringify(updatedRecords));
+                    // 重新加载订单
+                    this.loadSellerOrders();
+                    // 显示成功消息
+                    alert('订单已删除');
+                }
+            }
+        },
+        cancelTrade(order) {
+            if (confirm('确定要取消这笔交易吗？')) {
+                // 更新交易状态为取消
+                order.status = "交易取消";
+
+                // 更新localStorage中的数据
+                const storedRecords = localStorage.getItem('purchaseRecords');
+                if (storedRecords) {
+                    let records = JSON.parse(storedRecords);
+                    const index = records.findIndex(r => r.id === order.id);
+                    if (index !== -1) {
+                        records[index] = order;
+                        localStorage.setItem('purchaseRecords', JSON.stringify(records));
+                        // 重新加载订单
+                        this.loadSellerOrders();
+                        // 关闭模态框
+                        this.showProgressModal = false;
+                        // 显示成功消息
+                        alert('交易已取消');
+                    }
+                }
+            }
+        },
+        getStatusClass(status) {
+            switch (status) {
+                case '待付款':
+                    return 'bg-warning text-dark';
+                case '已付款，待发货':
+                    return 'bg-info text-white';
+                case '已发货，待收货':
+                    return 'bg-primary text-white';
+                case '交易完成':
+                    return 'bg-success text-white';
+                case '交易取消':
+                    return 'bg-danger text-white';
+                default:
+                    return 'bg-secondary text-white';
+            }
+        },
+        isSeller(order) {
+            const storedUser = localStorage.getItem('userInfo');
+            if (!storedUser) {
+                return false;
+            }
+            const userInfo = JSON.parse(storedUser);
+            return parseInt(userInfo.id) === order.sellerId;
+        },
+        formatDate(timestamp) {
+            // 如果没有时间戳，返回默认值
+            if (!timestamp) {
+                return '未知';
+            }
+            const date = new Date(timestamp);
+            return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+        }
+    }
+};
