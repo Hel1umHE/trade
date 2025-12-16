@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>身份认证 - 账户激活</title>
+    <!-- 引入本地Bootstrap CSS -->
+    <link rel="stylesheet" href="./res/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h4>身份认证 - 账户激活</h4>
+                    </div>
+                    <div class="card-body" id="app">
+                        <div v-if="!userInfo" class="alert alert-warning text-center">
+                            您还未注册，请先<a href="register.html" class="alert-link">注册</a>
+                        </div>
+                        <div v-else-if="userInfo.isVerified" class="alert alert-success text-center">
+                            <h5>🎉 恭喜您！</h5>
+                            <p>您的账户已成功激活</p>
+                            <a href="#" class="btn btn-primary mt-2">返回首页</a>
+                        </div>
+                        <form v-else @submit.prevent="verify" class="mt-4">
+                            <div class="text-center mb-4">
+                                <h5>欢迎，{{ userInfo.nickname }}！</h5>
+                                <p class="text-muted">请完成身份认证以激活您的账户</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">手机号</label>
+                                <input type="text" v-model="form.phone" class="form-control" id="phone" readonly
+                                    placeholder="注册手机号" required>
+                                <div v-if="errors.phone" class="text-danger mt-1 small">{{ errors.phone }}</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="realName" class="form-label">真实姓名</label>
+                                <input type="text" v-model="form.realName" class="form-control" id="realName"
+                                    placeholder="请输入真实姓名" required>
+                                <div v-if="errors.realName" class="text-danger mt-1 small">{{ errors.realName }}</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="className" class="form-label">班级</label>
+                                <input type="text" v-model="form.className" class="form-control" id="className"
+                                    placeholder="请输入班级" required>
+                                <div v-if="errors.className" class="text-danger mt-1 small">{{ errors.className }}</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="studentID" class="form-label">学号</label>
+                                <input type="text" v-model="form.studentID" class="form-control" id="studentID"
+                                    placeholder="请输入学号" required>
+                                <div v-if="errors.studentID" class="text-danger mt-1 small">{{ errors.studentID }}</div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100" :disabled="loading">
+                                <span v-if="loading" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                提交认证并激活账户
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入本地Vue.js -->
+    <script src="./res/vue.js"></script>
+    <!-- 引入本地Bootstrap JS -->
+    <script src="./res/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                userInfo: null,
+                form: {
+                    phone: '',
+                    realName: '',
+                    className: '',
+                    studentID: ''
+                },
+                errors: {},
+                loading: false
+            },
+            mounted() {
+                // 从localStorage获取用户信息
+                const storedUser = localStorage.getItem('userInfo');
+                if (storedUser) {
+                    this.userInfo = JSON.parse(storedUser);
+                    // 将注册手机号填充到表单中
+                    this.form.phone = this.userInfo.phone;
+                }
+            },
+            methods: {
+                validateForm() {
+                    this.errors = {};
+                    let isValid = true;
+
+                    // 验证手机号
+                    if (!this.form.phone) {
+                        this.errors.phone = '手机号不能为空';
+                        isValid = false;
+                    } else if (this.form.phone !== this.userInfo.phone) {
+                        this.errors.phone = '手机号与注册信息不一致';
+                        isValid = false;
+                    }
+
+                    // 验证真实姓名
+                    if (!this.form.realName) {
+                        this.errors.realName = '真实姓名不能为空';
+                        isValid = false;
+                    }
+
+                    // 验证班级
+                    if (!this.form.className) {
+                        this.errors.className = '班级不能为空';
+                        isValid = false;
+                    }
+
+                    // 验证学号
+                    if (!this.form.studentID) {
+                        this.errors.studentID = '学号不能为空';
+                        isValid = false;
+                    }
+
+                    return isValid;
+                },
+                verify() {
+                    if (this.validateForm()) {
+                        this.loading = true;
+
+                        // 模拟身份认证请求
+                        setTimeout(() => {
+                            this.loading = false;
+                            // 更新用户信息，标记为已认证
+                            this.userInfo.isVerified = true;
+                            // 保存认证信息
+                            this.userInfo.realName = this.form.realName;
+                            this.userInfo.className = this.form.className;
+                            this.userInfo.studentID = this.form.studentID;
+                            localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
+                            // 显示成功提示
+                            this.$forceUpdate();
+                        }, 1500);
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

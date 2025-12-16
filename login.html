@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录</title>
+    <!-- 引入本地Bootstrap CSS -->
+    <link rel="stylesheet" href="./res/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h4>用户登录</h4>
+                    </div>
+                    <div class="card-body" id="app">
+                        <form @submit.prevent="login">
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">手机号</label>
+                                <input type="tel" v-model="form.phone" class="form-control" id="phone"
+                                    placeholder="请输入手机号" required>
+                                <div v-if="errors.phone" class="text-danger mt-1 small">{{ errors.phone }}</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">密码</label>
+                                <input type="password" v-model="form.password" class="form-control" id="password"
+                                    placeholder="请输入密码" required>
+                                <div v-if="errors.password" class="text-danger mt-1 small">{{ errors.password }}</div>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" v-model="form.remember" class="form-check-input" id="remember">
+                                <label class="form-check-label" for="remember">记住我</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100" :disabled="loading">
+                                <span v-if="loading" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                登录
+                            </button>
+                            <div class="text-center mt-3">
+                                <p class="mb-0">还没有账号？<a href="register.html" class="text-primary">立即注册</a></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入本地Vue.js -->
+    <script src="./res/vue.js"></script>
+    <!-- 引入本地Bootstrap JS -->
+    <script src="./res/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                form: {
+                    phone: '',
+                    password: '',
+                    remember: false
+                },
+                errors: {},
+                loading: false
+            },
+            methods: {
+                validateForm() {
+                    this.errors = {};
+                    let isValid = true;
+
+                    // 验证手机号
+                    if (!this.form.phone) {
+                        this.errors.phone = '手机号不能为空';
+                        isValid = false;
+                    } else if (!/^1[3-9]\d{9}$/.test(this.form.phone)) {
+                        this.errors.phone = '请输入正确的手机号格式';
+                        isValid = false;
+                    }
+
+                    // 验证密码
+                    if (!this.form.password) {
+                        this.errors.password = '密码不能为空';
+                        isValid = false;
+                    }
+
+                    return isValid;
+                },
+                login() {
+                    if (this.validateForm()) {
+                        this.loading = true;
+
+                        // 模拟登录请求
+                        setTimeout(() => {
+                            this.loading = false;
+
+                            // 从localStorage获取用户信息进行验证
+                            const storedUser = localStorage.getItem('userInfo');
+
+                            if (storedUser) {
+                                const userInfo = JSON.parse(storedUser);
+
+                                // 这里只是简单模拟，实际项目中应该发送到服务器验证
+                                if (userInfo.phone === this.form.phone) {
+                                    // 检查用户是否已完成身份认证
+                                    if (!userInfo.isVerified) {
+                                        alert('请先完成身份认证以激活账户');
+                                        window.location.href = 'verify.html';
+                                    } else {
+                                        alert('登录成功！');
+                                        // 这里可以跳转到首页或其他页面
+                                        // window.location.href = 'index.html';
+                                    }
+                                } else {
+                                    alert('手机号或密码错误');
+                                }
+                            } else {
+                                alert('该手机号未注册，请先注册');
+                                window.location.href = 'register.html';
+                            }
+                        }, 1500);
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
