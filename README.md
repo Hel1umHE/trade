@@ -1,2 +1,6 @@
 # 校园二手闲置交易平台
 由本人编写的闲置交易平台，为课上作业  
+## 下载项目
+```bash
+git clone https://gitcode.com/Hel1um_HE/trade_platform.git
+```

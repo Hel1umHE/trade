@@ -25,13 +25,10 @@ const AboutComponent = {
                         <p class="card-text">如有问题或建议，请通过以下方式联系我们：</p>
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item">📧 邮箱：contact@campustrade.com</li>
-                            <li class="list-group-item">🐙 GitHub：<a href="https://github.com" target="_blank">校园交易平台</a></li>
+                            <li class="list-group-item">🐙 GitCode：<a href="https://gitcode.com/Hel1um_HE/trade_platform" target="_blank">校园交易平台</a></li>
                             <li class="list-group-item">💬 反馈：在GitCode仓库提交Issue</li>
                         </ul>
                         
-                        <h5 class="card-title mt-4">版本信息</h5>
-                        <p class="card-text">当前版本：1.0.0</p>
-                        <p class="card-text">更新时间：2025-12-16</p>
                     </div>
                 </div>
             </div>
