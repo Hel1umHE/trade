@@ -116,14 +116,37 @@
                         setTimeout(() => {
                             this.loading = false;
                             // 保存用户信息到localStorage，实际项目中应该发送到服务器
-                localStorage.setItem('userInfo', JSON.stringify({
-                    id: Date.now(), // 添加唯一ID
-                    phone: this.form.phone,
-                    nickname: this.form.nickname,
-                    isVerified: false
-                }));
-                            // 跳转到身份认证页面
-                            window.location.href = 'verify.html';
+                            // 获取现有用户列表
+                            const users = JSON.parse(localStorage.getItem('users')) || [];
+                            
+                            // 检查手机号是否已注册
+                            const isPhoneRegistered = users.some(user => user.phone === this.form.phone);
+                            
+                            if (isPhoneRegistered) {
+                                alert('该手机号已注册，请直接登录');
+                                window.location.href = 'login.html';
+                            } else {
+                                // 创建新用户
+                                const newUser = {
+                                    id: Date.now(), // 添加唯一ID
+                                    phone: this.form.phone,
+                                    nickname: this.form.nickname,
+                                    password: this.form.password, // 保存密码
+                                    isVerified: false
+                                };
+                                
+                                // 将新用户添加到用户列表
+                                users.push(newUser);
+                                
+                                // 保存更新后的用户列表
+                                localStorage.setItem('users', JSON.stringify(users));
+                                
+                                // 保存当前用户信息到localStorage，用于验证页面
+                                localStorage.setItem('currentUser', JSON.stringify(newUser));
+                                
+                                // 跳转到身份认证页面
+                                window.location.href = 'verify.html';
+                            }
                         }, 1500);
                     }
                 }

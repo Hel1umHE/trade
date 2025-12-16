@@ -50,6 +50,19 @@
             font-weight: bold;
         }
 
+        .sidebar .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .sidebar .sub-nav {
+            padding-left: 20px;
+        }
+
+        .sidebar .sub-nav .nav-link {
+            font-size: 14px;
+            padding: 5px 10px;
+        }
+
         .sidebar .publish-btn {
             margin: 20px;
             background-color: white;
@@ -187,7 +200,7 @@
             font-weight: bold;
             font-size: 18px;
         }
-        
+
         /* 交易进度样式 */
         .circle {
             width: 20px;
@@ -198,28 +211,28 @@
             margin: 0 5px;
             transition: all 0.3s ease;
         }
-        
+
         .circle.completed {
             background-color: #28a745;
             border-color: #28a745;
         }
-        
+
         .line {
             width: 50px;
             height: 2px;
             background-color: #dee2e6;
             transition: all 0.3s ease;
         }
-        
+
         .line.completed {
             background-color: #28a745;
         }
-        
+
         /* 模态框样式调整 */
         .modal {
             background-color: rgba(0, 0, 0, 0.5);
         }
-        
+
         .modal-dialog {
             margin-top: 100px;
         }
@@ -234,9 +247,29 @@
             <nav class="nav flex-column">
                 <router-link to="/home" class="nav-link" active-class="active">首页</router-link>
                 <router-link to="/chat" class="nav-link" active-class="active">私聊</router-link>
-                <router-link to="/my" class="nav-link" active-class="active">我的</router-link>
+                <div @click="toggleMyMenu"
+                    class="nav-link cursor-pointer d-flex justify-content-between align-items-center"
+                    :class="{ active: $route.path === '/my' || $route.path.startsWith('/my-') }">
+                    <span>我的</span>
+                    <span class="float-right">
+                        <span v-if="isMyMenuOpen">▼</span>
+                        <span v-else>▶</span>
+                    </span>
+                </div>
+                <div class="sub-nav ml-3 mt-1" v-if="isMyMenuOpen">
+                    <router-link to="/my" class="nav-link" active-class="active">个人信息</router-link>
+                    <router-link to="/my-products" class="nav-link" active-class="active">我的商品</router-link>
+                    <router-link to="/my-purchase" class="nav-link" active-class="active">购买记录</router-link>
+                    <router-link to="/my-browse" class="nav-link" active-class="active">浏览记录</router-link>
+                </div>
                 <router-link to="/seller-orders" class="nav-link" active-class="active">卖家订单</router-link>
                 <button class="btn btn-primary publish-btn mt-3" @click="goToPublish">发布商品</button>
+                <div class="mt-auto pt-3 border-top border-white border-opacity-25">
+                    <router-link to="/about" class="nav-link text-white text-opacity-75"
+                        style="font-size: 14px;">关于页面</router-link>
+                    <a href="https://gitcode.com/Hel1um_HE/trade_platform" target="_blank"
+                        class="nav-link text-white text-opacity-75" style="font-size: 14px;">GitCode仓库</a>
+                </div>
             </nav>
         </div>
 
@@ -273,6 +306,12 @@
     <script src="./components/product.js"></script>
     <script src="./components/seller.js"></script>
     <script src="./components/seller-orders.js"></script>
+    <script src="./components/about.js"></script>
+    <script src="./components/change-password.js"></script>
+    <script src="./components/edit-profile.js"></script>
+    <script src="./components/my-products.js"></script>
+    <script src="./components/my-purchase.js"></script>
+    <script src="./components/my-browse.js"></script>
     <script>
         // 检查用户是否已登录
         const checkLogin = () => {
@@ -333,11 +372,36 @@
                     {
                         path: '/seller-orders',
                         component: SellerOrdersComponent
+                    },
+                    {
+                        path: '/about',
+                        component: AboutComponent
+                    },
+                    {
+                        path: '/change-password',
+                        component: ChangePasswordComponent
+                    },
+                    {
+                        path: '/edit-profile',
+                        component: EditProfileComponent
+                    },
+                    {
+                        path: '/my-products',
+                        component: MyProductsComponent
+                    },
+                    {
+                        path: '/my-purchase',
+                        component: MyPurchaseComponent
+                    },
+                    {
+                        path: '/my-browse',
+                        component: MyBrowseComponent
                     }
                 ]
             }),
             data: {
-                userInfo: null
+                userInfo: null,
+                isMyMenuOpen: false
             },
             mounted() {
                 // 获取用户信息
@@ -350,6 +414,14 @@
                         localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
                     }
                 }
+                // 根据当前路由状态设置菜单折叠
+                this.updateMyMenuState();
+            },
+            watch: {
+                '$route'(to) {
+                    // 监听路由变化，更新菜单状态
+                    this.updateMyMenuState();
+                }
             },
             methods: {
                 goToPublish() {
@@ -357,6 +429,18 @@
                 },
                 goToMy() {
                     this.$router.push('/my');
+                },
+                toggleMyMenu() {
+                    // 切换菜单折叠状态
+                    this.isMyMenuOpen = !this.isMyMenuOpen;
+                    // 如果打开菜单且当前不在"我的"相关页面，则跳转到个人信息页面
+                    if (this.isMyMenuOpen && this.$route.path !== '/my' && !this.$route.path.startsWith('/my-')) {
+                        this.$router.push('/my');
+                    }
+                },
+                updateMyMenuState() {
+                    // 如果当前在"我的"相关页面，自动展开菜单
+                    this.isMyMenuOpen = this.$route.path === '/my' || this.$route.path.startsWith('/my-');
                 }
             }
         });

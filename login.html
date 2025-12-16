@@ -97,18 +97,23 @@
                             this.loading = false;
 
                             // 从localStorage获取用户信息进行验证
-                            const storedUser = localStorage.getItem('userInfo');
+                            const users = JSON.parse(localStorage.getItem('users')) || [];
 
-                            if (storedUser) {
-                                const userInfo = JSON.parse(storedUser);
+                            // 查找匹配的用户
+                            const matchedUser = users.find(user => user.phone === this.form.phone);
 
-                                // 这里只是简单模拟，实际项目中应该发送到服务器验证
-                                if (userInfo.phone === this.form.phone) {
+                            if (matchedUser) {
+                                // 检查密码是否正确
+                                if (matchedUser.password === this.form.password) {
                                     // 检查用户是否已完成身份认证
-                                    if (!userInfo.isVerified) {
+                                    if (!matchedUser.isVerified) {
+                                        // 保存当前用户信息到localStorage，用于验证页面
+                                        localStorage.setItem('currentUser', JSON.stringify(matchedUser));
                                         alert('请先完成身份认证以激活账户');
                                         window.location.href = 'verify.html';
                                     } else {
+                                        // 保存当前登录用户信息到localStorage，用于首页等页面
+                                        localStorage.setItem('userInfo', JSON.stringify(matchedUser));
                                         alert('登录成功！');
                                         // 跳转到首页
                                         window.location.href = 'index.html';

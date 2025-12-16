@@ -164,15 +164,17 @@ const ProductComponent = {
         },
         addBrowseRecord() {
             // 获取当前用户信息
+            let currentUserId = null;
             const storedUser = localStorage.getItem('userInfo');
-            if (!storedUser) {
-                return;
+            if (storedUser) {
+                const userInfo = JSON.parse(storedUser);
+                currentUserId = parseInt(userInfo.id);
             }
-            const userInfo = JSON.parse(storedUser);
 
             // 创建浏览记录
             const browseRecord = {
                 id: Date.now() + Math.floor(Math.random() * 1000),
+                userId: currentUserId,
                 productId: this.product.id,
                 productTitle: this.product.title,
                 productPrice: this.product.price,

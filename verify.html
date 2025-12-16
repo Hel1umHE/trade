@@ -92,7 +92,7 @@
             },
             mounted() {
                 // 从localStorage获取用户信息
-                const storedUser = localStorage.getItem('userInfo');
+                const storedUser = localStorage.getItem('currentUser') || localStorage.getItem('userInfo');
                 if (storedUser) {
                     this.userInfo = JSON.parse(storedUser);
                     // 将注册手机号填充到表单中
@@ -146,7 +146,21 @@
                             this.userInfo.realName = this.form.realName;
                             this.userInfo.className = this.form.className;
                             this.userInfo.studentID = this.form.studentID;
+                            
+                            // 更新用户列表中的用户信息
+                            const users = JSON.parse(localStorage.getItem('users')) || [];
+                            const updatedUsers = users.map(user => {
+                                if (user.id === this.userInfo.id) {
+                                    return this.userInfo;
+                                }
+                                return user;
+                            });
+                            localStorage.setItem('users', JSON.stringify(updatedUsers));
+                            
+                            // 更新当前用户信息
                             localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
+                            localStorage.setItem('currentUser', JSON.stringify(this.userInfo));
+                            
                             // 显示成功提示
                             this.$forceUpdate();
                         }, 1500);
