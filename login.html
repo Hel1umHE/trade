@@ -66,6 +66,20 @@
                 errors: {},
                 loading: false
             },
+            mounted() {
+                // 页面加载时检查是否有记住的用户信息
+                const rememberedUser = localStorage.getItem('rememberedUser');
+                if (rememberedUser) {
+                    try {
+                        const user = JSON.parse(rememberedUser);
+                        this.form.phone = user.phone || '';
+                        this.form.password = user.password || '';
+                        this.form.remember = true;
+                    } catch (e) {
+                        console.error('解析记住的用户信息失败:', e);
+                    }
+                }
+            },
             methods: {
                 validateForm() {
                     this.errors = {};
@@ -105,6 +119,18 @@
                             if (matchedUser) {
                                 // 检查密码是否正确
                                 if (matchedUser.password === this.form.password) {
+                                    // 根据"记住我"选项处理用户信息
+                                    if (this.form.remember) {
+                                        // 保存记住的用户信息（仅保存手机号和密码，用于自动填充）
+                                        localStorage.setItem('rememberedUser', JSON.stringify({
+                                            phone: this.form.phone,
+                                            password: this.form.password
+                                        }));
+                                    } else {
+                                        // 清除记住的用户信息
+                                        localStorage.removeItem('rememberedUser');
+                                    }
+
                                     // 检查用户是否已完成身份认证
                                     if (!matchedUser.isVerified) {
                                         // 保存当前用户信息到localStorage，用于验证页面
