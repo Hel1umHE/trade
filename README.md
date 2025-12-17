@@ -43,4 +43,6 @@ git clone https://gitcode.com/Hel1um_HE/trade_platform.git
 在clone本仓库之后，双击打开项目文件夹，找到`index.html`文件，用浏览器打开即可。
 
 ## 已知问题
-私聊相关逻辑未编写
+1. 私聊相关逻辑未编写
+2. 搜索功能未实现
+3. 未制作后台管理员相关功能
