@@ -281,8 +281,12 @@
                     :class="{ active: $route.path === '/my' || $route.path.startsWith('/my-') }">
                     <span><i class="bi bi-person-fill me-2"></i>我的</span>
                     <span class="float-right">
-                        <span v-if="isMyMenuOpen">▼</span>
-                        <span v-else>▶</span>
+                        <span v-if="isMyMenuOpen">
+                            <i class="bi bi-caret-down-fill"></i>
+                        </span>
+                        <span v-else>
+                            <i class="bi bi-caret-right-fill"></i>
+                        </span>
                     </span>
                 </div>
                 <div class="sub-nav ml-3 mt-1" v-if="isMyMenuOpen">
