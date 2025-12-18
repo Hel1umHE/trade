@@ -156,12 +156,33 @@ const SellerOrdersComponent = {
             const userInfo = JSON.parse(storedUser);
             const currentUserId = parseInt(userInfo.id);
 
-            // 从 localStorage 获取所有购买记录
-            const storedRecords = localStorage.getItem('purchaseRecords');
-            if (storedRecords) {
-                const allRecords = JSON.parse(storedRecords);
-                // 筛选出当前用户作为卖家的记录
-                this.sellerOrders = allRecords.filter(record => parseInt(record.sellerId) === currentUserId);
+            try {
+                // 从 localStorage 获取所有购买记录
+                const storedRecords = localStorage.getItem('purchaseRecords');
+                if (storedRecords) {
+                    const allRecords = JSON.parse(storedRecords);
+                    // 筛选出当前用户作为卖家的记录
+                    const sellerRecords = allRecords.filter(record => parseInt(record.sellerId) === currentUserId);
+
+                    // 获取所有商品数据
+                    const storedProducts = localStorage.getItem('products');
+                    const allProducts = storedProducts ? JSON.parse(storedProducts) : [];
+
+                    // 为每条订单补充完整商品信息
+                    this.sellerOrders = sellerRecords.map(order => {
+                        const product = allProducts.find(p => p.id === order.productId) || {};
+                        // 合并订单和商品信息
+                        return {
+                            ...order,
+                            productTitle: product.title || '未知商品',
+                            productPrice: product.price || '¥0.00',
+                            productImage: product.image || 'https://dummyimage.com/300x200/000/fff'
+                        };
+                    });
+                }
+            } catch (error) {
+                console.error('加载卖家订单失败:', error);
+                this.sellerOrders = [];
             }
         },
         showTradeProgress(order) {
@@ -186,15 +207,34 @@ const SellerOrdersComponent = {
             // 更新localStorage中的数据
             const storedRecords = localStorage.getItem('purchaseRecords');
             if (storedRecords) {
-                let records = JSON.parse(storedRecords);
-                const index = records.findIndex(r => r.id === order.id);
-                if (index !== -1) {
-                    records[index] = order;
-                    localStorage.setItem('purchaseRecords', JSON.stringify(records));
-                    // 重新加载订单
-                    this.loadSellerOrders();
-                    // 显示成功消息
-                    alert('操作成功！');
+                try {
+                    let records = JSON.parse(storedRecords);
+                    const index = records.findIndex(r => r.id === order.id);
+                    if (index !== -1) {
+                        // 只保存必要的字段回localStorage，避免冗余数据
+                        const updatedOrder = {
+                            id: order.id,
+                            productId: order.productId,
+                            buyerId: order.buyerId,
+                            sellerId: order.sellerId,
+                            buyerName: order.buyerName,
+                            sellerName: order.sellerName,
+                            purchaseTime: order.purchaseTime,
+                            hasPaid: order.hasPaid,
+                            hasShipped: order.hasShipped,
+                            hasReceived: order.hasReceived,
+                            status: order.status
+                        };
+                        records[index] = updatedOrder;
+                        localStorage.setItem('purchaseRecords', JSON.stringify(records));
+                        // 重新加载订单
+                        this.loadSellerOrders();
+                        // 显示成功消息
+                        alert('操作成功！');
+                    }
+                } catch (error) {
+                    console.error('更新订单失败:', error);
+                    alert('操作失败，请稍后重试');
                 }
             }
 
@@ -215,40 +255,64 @@ const SellerOrdersComponent = {
         },
         deleteOrder(order) {
             if (confirm('确定要删除这笔订单吗？')) {
-                // 从localStorage中删除订单
-                const storedRecords = localStorage.getItem('purchaseRecords');
-                if (storedRecords) {
-                    let records = JSON.parse(storedRecords);
-                    // 过滤掉要删除的订单
-                    const updatedRecords = records.filter(r => r.id !== order.id);
-                    localStorage.setItem('purchaseRecords', JSON.stringify(updatedRecords));
-                    // 重新加载订单
-                    this.loadSellerOrders();
-                    // 显示成功消息
-                    alert('订单已删除');
+                try {
+                    // 从localStorage中删除订单
+                    const storedRecords = localStorage.getItem('purchaseRecords');
+                    if (storedRecords) {
+                        let records = JSON.parse(storedRecords);
+                        // 过滤掉要删除的订单
+                        const updatedRecords = records.filter(r => r.id !== order.id);
+                        localStorage.setItem('purchaseRecords', JSON.stringify(updatedRecords));
+                        // 重新加载订单
+                        this.loadSellerOrders();
+                        // 显示成功消息
+                        alert('订单已删除');
+                    }
+                } catch (error) {
+                    console.error('删除订单失败:', error);
+                    alert('删除订单失败，请稍后重试');
                 }
             }
         },
         cancelTrade(order) {
             if (confirm('确定要取消这笔交易吗？')) {
-                // 更新交易状态为取消
-                order.status = "交易取消";
+                try {
+                    // 更新交易状态为取消
+                    order.status = "交易取消";
 
-                // 更新localStorage中的数据
-                const storedRecords = localStorage.getItem('purchaseRecords');
-                if (storedRecords) {
-                    let records = JSON.parse(storedRecords);
-                    const index = records.findIndex(r => r.id === order.id);
-                    if (index !== -1) {
-                        records[index] = order;
-                        localStorage.setItem('purchaseRecords', JSON.stringify(records));
-                        // 重新加载订单
-                        this.loadSellerOrders();
-                        // 关闭模态框
-                        this.showProgressModal = false;
-                        // 显示成功消息
-                        alert('交易已取消');
+                    // 更新localStorage中的数据
+                    const storedRecords = localStorage.getItem('purchaseRecords');
+                    if (storedRecords) {
+                        let records = JSON.parse(storedRecords);
+                        const index = records.findIndex(r => r.id === order.id);
+                        if (index !== -1) {
+                            // 只保存必要的字段回localStorage
+                            const updatedOrder = {
+                                id: order.id,
+                                productId: order.productId,
+                                buyerId: order.buyerId,
+                                sellerId: order.sellerId,
+                                buyerName: order.buyerName,
+                                sellerName: order.sellerName,
+                                purchaseTime: order.purchaseTime,
+                                hasPaid: order.hasPaid,
+                                hasShipped: order.hasShipped,
+                                hasReceived: order.hasReceived,
+                                status: order.status
+                            };
+                            records[index] = updatedOrder;
+                            localStorage.setItem('purchaseRecords', JSON.stringify(records));
+                            // 重新加载订单
+                            this.loadSellerOrders();
+                            // 关闭模态框
+                            this.showProgressModal = false;
+                            // 显示成功消息
+                            alert('交易已取消');
+                        }
                     }
+                } catch (error) {
+                    console.error('取消交易失败:', error);
+                    alert('取消交易失败，请稍后重试');
                 }
             }
         },

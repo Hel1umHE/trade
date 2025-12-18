@@ -92,7 +92,7 @@ const ChangePasswordComponent = {
             localStorage.removeItem('currentUser');
 
             // 跳转到登录页面
-            window.location.href = 'login.html';
+            window.location.href = 'account/login.html';
         },
         goBack() {
             // 返回上一页

@@ -49,7 +49,7 @@ const MyComponent = {
                 // 清除用户信息
                 localStorage.removeItem('userInfo');
                 // 跳转到登录页面
-                window.location.href = 'login.html';
+                window.location.href = 'account/login.html';
             }
         },
         deleteAccount() {
@@ -87,7 +87,7 @@ const MyComponent = {
 
                     // 跳转到登录页面
                     alert('账号已成功注销');
-                    window.location.href = 'login.html';
+                    window.location.href = 'account/login.html';
                 }
             }
         },

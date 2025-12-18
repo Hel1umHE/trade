@@ -6,7 +6,7 @@ const HomeComponent = {
             <p>欢迎来到校园交易平台首页！</p>
             <div class="row mt-4">
                 <!-- 商品卡片 -->
-                <div class="col-md-4" v-for="product in products" :key="product.id">
+                <div class="col-md-4" v-for="product in filteredProducts" :key="product.id">
                     <div class="product-card">
                         <img :src="product.image" alt="商品图片" @click="goToProduct(product)">
                         <div class="product-info">
@@ -20,16 +20,43 @@ const HomeComponent = {
                         </div>
                     </div>
                 </div>
+                <!-- 无搜索结果提示 -->
+                <div v-if="filteredProducts.length === 0" class="col-12 text-center py-5">
+                    <p class="text-muted">未找到相关商品</p>
+                </div>
             </div>
         </div>
     `,
     data() {
         return {
-            products: []
+            products: [],
+            searchKeyword: ''
         };
+    },
+    computed: {
+        // 根据搜索关键字过滤商品
+        filteredProducts() {
+            if (!this.searchKeyword) {
+                return this.products;
+            }
+            const keyword = this.searchKeyword.toLowerCase();
+            return this.products.filter(product => {
+                return product.title.toLowerCase().includes(keyword) ||
+                       product.description.toLowerCase().includes(keyword) ||
+                       product.sellerName.toLowerCase().includes(keyword);
+            });
+        }
     },
     mounted() {
         this.loadProducts();
+        // 监听根组件的搜索事件
+        this.$root.$on('search', (keyword) => {
+            this.searchKeyword = keyword;
+        });
+    },
+    beforeDestroy() {
+        // 组件销毁前移除事件监听，避免内存泄漏
+        this.$root.$off('search');
     },
     methods: {
         loadProducts() {
@@ -74,8 +101,8 @@ const HomeComponent = {
             }
         },
         goToProduct(product) {
-            // 保存当前商品信息到localStorage
-            localStorage.setItem('currentProduct', JSON.stringify(product));
+            // 只保存商品ID到localStorage，避免localStorage容量超限
+            localStorage.setItem('currentProductId', product.id.toString());
             // 跳转到商品详情页
             this.$router.push(`/product/${product.id}`);
         }

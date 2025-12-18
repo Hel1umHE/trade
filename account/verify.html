@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>身份认证 - 账户激活</title>
     <!-- 引入本地Bootstrap CSS -->
-    <link rel="stylesheet" href="./res/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../res/bootstrap-5.3.8-dist/css/bootstrap.min.css">
 </head>
 
 <body>
@@ -24,7 +24,7 @@
                         <div v-else-if="userInfo.isVerified" class="alert alert-success text-center">
                             <h5>🎉 恭喜您！</h5>
                             <p>您的账户已成功激活</p>
-                            <a href="index.html" class="btn btn-primary mt-2">返回首页</a>
+                            <a href="../index.html" class="btn btn-primary mt-2">返回首页</a>
                         </div>
                         <form v-else @submit.prevent="verify" class="mt-4">
                             <div class="text-center mb-4">
@@ -73,9 +73,9 @@
     </div>
 
     <!-- 引入本地Vue.js -->
-    <script src="./res/vue.js"></script>
+    <script src="../res/vue.min.js"></script>
     <!-- 引入本地Bootstrap JS -->
-    <script src="./res/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../res/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
     <script>
         new Vue({
             el: '#app',
@@ -146,7 +146,7 @@
                             this.userInfo.realName = this.form.realName;
                             this.userInfo.className = this.form.className;
                             this.userInfo.studentID = this.form.studentID;
-                            
+
                             // 更新用户列表中的用户信息
                             const users = JSON.parse(localStorage.getItem('users')) || [];
                             const updatedUsers = users.map(user => {
@@ -156,11 +156,11 @@
                                 return user;
                             });
                             localStorage.setItem('users', JSON.stringify(updatedUsers));
-                            
+
                             // 更新当前用户信息
                             localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
                             localStorage.setItem('currentUser', JSON.stringify(this.userInfo));
-                            
+
                             // 显示成功提示
                             this.$forceUpdate();
                         }, 1500);

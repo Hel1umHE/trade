@@ -247,8 +247,10 @@
         <div class="sidebar col-md-2" style="width: 250px;">
             <h3>校园交易平台</h3>
             <nav class="nav flex-column">
-                <router-link to="/home" class="nav-link" active-class="active"><i class="bi bi-house-fill me-2"></i>首页</router-link>
-                <router-link to="/chat" class="nav-link" active-class="active"><i class="bi bi-chat-dots-fill me-2"></i>私聊</router-link>
+                <router-link to="/home" class="nav-link" active-class="active"><i
+                        class="bi bi-house-fill me-2"></i>首页</router-link>
+                <router-link to="/chat" class="nav-link" active-class="active"><i
+                        class="bi bi-chat-dots-fill me-2"></i>私聊</router-link>
                 <div @click="toggleMyMenu"
                     class="nav-link cursor-pointer d-flex justify-content-between align-items-center"
                     :class="{ active: $route.path === '/my' || $route.path.startsWith('/my-') }">
@@ -264,11 +266,13 @@
                     <router-link to="/my-purchase" class="nav-link" active-class="active">购买记录</router-link>
                     <router-link to="/my-browse" class="nav-link" active-class="active">浏览记录</router-link>
                 </div>
-                <router-link to="/seller-orders" class="nav-link" active-class="active"><i class="bi bi-clipboard-fill me-2"></i>卖家订单</router-link>
-                <button class="btn btn-primary publish-btn mt-3" @click="goToPublish"><i class="bi bi-upload me-2"></i>发布商品</button>
+                <router-link to="/seller-orders" class="nav-link" active-class="active"><i
+                        class="bi bi-clipboard-fill me-2"></i>卖家订单</router-link>
+                <button class="btn btn-primary publish-btn mt-3" @click="goToPublish"><i
+                        class="bi bi-upload me-2"></i>发布商品</button>
                 <div class="mt-auto pt-3 border-top border-white border-opacity-25">
-                    <router-link to="/about" class="nav-link text-white text-opacity-75"
-                        style="font-size: 14px;"><i class="bi bi-info-circle me-2"></i>关于页面</router-link>
+                    <router-link to="/about" class="nav-link text-white text-opacity-75" style="font-size: 14px;"><i
+                            class="bi bi-info-circle me-2"></i>关于页面</router-link>
                     <a href="https://gitcode.com/Hel1um_HE/trade_platform" target="_blank"
                         class="nav-link text-white text-opacity-75" style="font-size: 14px;">GitCode仓库</a>
                 </div>
@@ -280,7 +284,8 @@
             <!-- 头部 -->
             <div class="header">
                 <div class="search-box">
-                    <input type="text" class="form-control" placeholder="搜索商品或用户">
+                    <input type="text" class="form-control" placeholder="搜索商品..." v-model="searchKeyword"
+                        @input="handleSearch" @keyup.enter="handleSearch">
                 </div>
                 <div class="avatar" @click="goToMy">
                     {{ userInfo ? userInfo.nickname.charAt(0) : '头' }}
@@ -320,13 +325,13 @@
             const storedUser = localStorage.getItem('userInfo');
             if (!storedUser) {
                 alert('请先登录');
-                window.location.href = 'login.html';
+                window.location.href = 'account/login.html';
                 return false;
             }
             const userInfo = JSON.parse(storedUser);
             if (!userInfo.isVerified) {
                 alert('请先完成身份认证以激活账户');
-                window.location.href = 'verify.html';
+                window.location.href = 'account/verify.html';
                 return false;
             }
             return true;
@@ -349,7 +354,8 @@
                     },
                     {
                         path: '/home',
-                        component: HomeComponent
+                        component: HomeComponent,
+                        props: route => ({ searchKeyword: route.params.searchKeyword })
                     },
                     {
                         path: '/chat',
@@ -403,7 +409,8 @@
             }),
             data: {
                 userInfo: null,
-                isMyMenuOpen: false
+                isMyMenuOpen: false,
+                searchKeyword: ''
             },
             mounted() {
                 // 获取用户信息
@@ -443,6 +450,15 @@
                 updateMyMenuState() {
                     // 如果当前在"我的"相关页面，自动展开菜单
                     this.isMyMenuOpen = this.$route.path === '/my' || this.$route.path.startsWith('/my-');
+                },
+                handleSearch() {
+                    // 处理搜索逻辑
+                    // 如果当前不在首页，则跳转到首页
+                    if (this.$route.path !== '/home') {
+                        this.$router.push('/home');
+                    }
+                    // 触发首页组件的搜索过滤
+                    this.$root.$emit('search', this.searchKeyword);
                 }
             }
         });

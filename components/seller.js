@@ -150,8 +150,8 @@ const SellerComponent = {
             this.$router.push('/chat');
         },
         goToProduct(product) {
-            // 保存当前商品信息到localStorage
-            localStorage.setItem('currentProduct', JSON.stringify(product));
+            // 只保存商品ID到localStorage，避免localStorage容量超限
+            localStorage.setItem('currentProductId', product.id.toString());
             // 跳转到商品详情页
             this.$router.push(`/product/${product.id}`);
         }

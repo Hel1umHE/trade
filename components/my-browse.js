@@ -52,9 +52,30 @@ const MyBrowseComponent = {
             // 从 localStorage 获取所有浏览记录
             const storedRecords = localStorage.getItem('browseRecords');
             if (storedRecords) {
-                const allRecords = JSON.parse(storedRecords);
-                // 筛选出当前用户的浏览记录，处理userId为null的情况
-                this.browseRecords = allRecords.filter(record => record.userId === currentUserId || record.userId === null);
+                try {
+                    const allRecords = JSON.parse(storedRecords);
+                    // 筛选出当前用户的浏览记录，处理userId为null的情况
+                    const userRecords = allRecords.filter(record => record.userId === currentUserId || record.userId === null);
+
+                    // 获取所有商品数据
+                    const storedProducts = localStorage.getItem('products');
+                    const allProducts = storedProducts ? JSON.parse(storedProducts) : [];
+
+                    // 为每条浏览记录补充完整商品信息
+                    this.browseRecords = userRecords.map(record => {
+                        const product = allProducts.find(p => p.id === record.productId) || {};
+                        // 合并浏览记录和商品信息
+                        return {
+                            ...record,
+                            productTitle: product.title || '未知商品',
+                            productPrice: product.price || '¥0.00',
+                            productImage: product.image || 'https://dummyimage.com/300x200/000/fff'
+                        };
+                    });
+                } catch (error) {
+                    console.error('加载浏览记录失败:', error);
+                    this.browseRecords = [];
+                }
             }
         },
         goToProductByBrowse(record) {
@@ -64,7 +85,8 @@ const MyBrowseComponent = {
                 const allProducts = JSON.parse(storedProducts);
                 const product = allProducts.find(p => p.id === record.productId);
                 if (product) {
-                    localStorage.setItem('currentProduct', JSON.stringify(product));
+                    // 只保存商品ID到localStorage，避免localStorage容量超限
+                    localStorage.setItem('currentProductId', product.id.toString());
                     this.$router.push(`/product/${product.id}`);
                 }
             }

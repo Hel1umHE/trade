@@ -66,14 +66,33 @@ const ProductComponent = {
         };
     },
     mounted() {
-        // 从localStorage获取当前商品信息
-        const storedProduct = localStorage.getItem('currentProduct');
-        if (storedProduct) {
-            this.product = JSON.parse(storedProduct);
-            // 根据商品的sellerId获取卖家信息
-            this.getSellerInfo(this.product.sellerId);
-            // 添加浏览记录
-            this.addBrowseRecord();
+        // 从localStorage获取商品ID
+        let productId = localStorage.getItem('currentProductId');
+
+        // 如果localStorage中没有商品ID，尝试从URL参数中获取
+        if (!productId) {
+            const pathSegments = this.$route.path.split('/');
+            productId = pathSegments[pathSegments.length - 1];
+        }
+
+        if (productId) {
+            productId = parseInt(productId);
+            // 从localStorage获取所有商品数据
+            const storedProducts = localStorage.getItem('products');
+            if (storedProducts) {
+                const allProducts = JSON.parse(storedProducts);
+                // 根据商品ID查找商品
+                const foundProduct = allProducts.find(product => product.id === productId);
+                if (foundProduct) {
+                    this.product = foundProduct;
+                    // 根据商品的sellerId获取卖家信息
+                    this.getSellerInfo(this.product.sellerId);
+                    // 添加浏览记录
+                    this.addBrowseRecord();
+                } else {
+                    console.error('未找到对应的商品信息');
+                }
+            }
         }
     },
     methods: {
@@ -120,47 +139,66 @@ const ProductComponent = {
             }
         },
         buyProduct() {
-            // 获取当前用户信息
-            const storedUser = localStorage.getItem('userInfo');
-            if (!storedUser) {
-                alert('请先登录');
-                return;
+            try {
+                // 获取当前用户信息
+                const storedUser = localStorage.getItem('userInfo');
+                if (!storedUser) {
+                    alert('请先登录');
+                    return;
+                }
+                const userInfo = JSON.parse(storedUser);
+
+                // 简化购买记录结构，只存储必要信息
+                const purchaseRecord = {
+                    id: Date.now() + Math.floor(Math.random() * 1000),
+                    productId: this.product.id,
+                    buyerId: parseInt(userInfo.id),
+                    sellerId: parseInt(this.product.sellerId),
+                    buyerName: userInfo.nickname,
+                    sellerName: this.product.sellerName,
+                    purchaseTime: Date.now(),
+                    // 交易进度状态
+                    hasPaid: false,       // 买家是否已付款
+                    hasShipped: false,    // 卖家是否已发货
+                    hasReceived: false,   // 买家是否已收货
+                    status: "待付款"
+                };
+
+                // 获取现有购买记录
+                const storedRecords = localStorage.getItem('purchaseRecords');
+                let records = [];
+                if (storedRecords) {
+                    try {
+                        records = JSON.parse(storedRecords);
+                    } catch (error) {
+                        console.error('解析购买记录失败:', error);
+                        records = [];
+                    }
+                }
+
+                // 添加新记录
+                records.push(purchaseRecord);
+
+                // 限制购买记录数量，只保留最近的50条，减少localStorage占用
+                if (records.length > 50) {
+                    records = records.slice(-50);
+                }
+
+                // 保存回 localStorage
+                localStorage.setItem('purchaseRecords', JSON.stringify(records));
+
+                alert('购买请求已提交');
+            } catch (error) {
+                console.error('购买失败:', error);
+                // 尝试清理部分数据
+                try {
+                    // 清空浏览记录以释放空间
+                    localStorage.removeItem('browseRecords');
+                    alert('购买失败，已清理部分数据，请重试');
+                } catch (e) {
+                    alert('购买失败，localStorage容量不足，请稍后重试');
+                }
             }
-            const userInfo = JSON.parse(storedUser);
-
-            // 创建购买记录
-            const purchaseRecord = {
-                id: Date.now() + Math.floor(Math.random() * 1000),
-                productId: this.product.id,
-                productTitle: this.product.title,
-                productPrice: this.product.price,
-                productImage: this.product.image,
-                buyerId: parseInt(userInfo.id),
-                sellerId: parseInt(this.product.sellerId),
-                buyerName: userInfo.nickname,
-                sellerName: this.product.sellerName,
-                purchaseTime: Date.now(),
-                // 交易进度状态
-                hasPaid: false,       // 买家是否已付款
-                hasShipped: false,    // 卖家是否已发货
-                hasReceived: false,   // 买家是否已收货
-                status: "待付款"
-            };
-
-            // 获取现有购买记录
-            const storedRecords = localStorage.getItem('purchaseRecords');
-            let records = [];
-            if (storedRecords) {
-                records = JSON.parse(storedRecords);
-            }
-
-            // 添加新记录
-            records.push(purchaseRecord);
-
-            // 保存回 localStorage
-            localStorage.setItem('purchaseRecords', JSON.stringify(records));
-
-            alert('购买请求已提交');
         },
         addBrowseRecord() {
             // 获取当前用户信息
@@ -171,16 +209,11 @@ const ProductComponent = {
                 currentUserId = parseInt(userInfo.id);
             }
 
-            // 创建浏览记录
+            // 简化浏览记录结构，只存储必要信息，减少localStorage占用
             const browseRecord = {
                 id: Date.now() + Math.floor(Math.random() * 1000),
                 userId: currentUserId,
                 productId: this.product.id,
-                productTitle: this.product.title,
-                productPrice: this.product.price,
-                productImage: this.product.image,
-                sellerId: parseInt(this.product.sellerId),
-                sellerName: this.product.sellerName,
                 browseTime: Date.now()
             };
 
@@ -188,7 +221,12 @@ const ProductComponent = {
             const storedRecords = localStorage.getItem('browseRecords');
             let records = [];
             if (storedRecords) {
-                records = JSON.parse(storedRecords);
+                try {
+                    records = JSON.parse(storedRecords);
+                } catch (error) {
+                    console.error('解析浏览记录失败:', error);
+                    records = [];
+                }
             }
 
             // 移除相同商品的旧记录
@@ -197,13 +235,24 @@ const ProductComponent = {
             // 添加新记录到开头
             records.unshift(browseRecord);
 
-            // 限制浏览记录数量为20条
-            if (records.length > 20) {
-                records = records.slice(0, 20);
+            // 进一步限制浏览记录数量为10条，减少存储占用
+            if (records.length > 10) {
+                records = records.slice(0, 10);
             }
 
-            // 保存回 localStorage
-            localStorage.setItem('browseRecords', JSON.stringify(records));
+            // 保存回 localStorage，添加错误处理
+            try {
+                localStorage.setItem('browseRecords', JSON.stringify(records));
+            } catch (error) {
+                console.error('保存浏览记录失败，localStorage容量可能不足:', error);
+                // 如果保存失败，可以选择清空部分或全部浏览记录
+                records = [];
+                try {
+                    localStorage.setItem('browseRecords', JSON.stringify(records));
+                } catch (e) {
+                    console.error('清空浏览记录失败:', e);
+                }
+            }
         }
     }
 };
