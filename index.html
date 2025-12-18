@@ -204,13 +204,26 @@
         }
 
         /* 交易进度样式 */
+        .progress-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+        }
+
         .circle {
             width: 20px;
             height: 20px;
             border-radius: 50%;
             border: 2px solid #dee2e6;
             background-color: white;
-            margin: 0 5px;
             transition: all 0.3s ease;
         }
 
@@ -219,8 +232,20 @@
             border-color: #28a745;
         }
 
+        .line-container {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            z-index: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
         .line {
-            width: 50px;
+            flex: 1;
             height: 2px;
             background-color: #dee2e6;
             transition: all 0.3s ease;

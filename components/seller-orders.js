@@ -75,17 +75,23 @@ const SellerOrdersComponent = {
                             <div class="mt-4">
                                 <h7>订单进度：</h7>
                                 <div class="mt-2">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div class="circle" :class="{ completed: currentOrder.hasPaid }"></div>
-                                        <div class="line" :class="{ completed: currentOrder.hasPaid && currentOrder.hasShipped }"></div>
-                                        <div class="circle" :class="{ completed: currentOrder.hasShipped }"></div>
-                                        <div class="line" :class="{ completed: currentOrder.hasShipped && currentOrder.hasReceived }"></div>
-                                        <div class="circle" :class="{ completed: currentOrder.hasReceived }"></div>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <span>买家已付款</span>
-                                        <span>卖家已发货</span>
-                                        <span>买家已收货</span>
+                                    <div class="progress-container">
+                                        <div class="progress-step">
+                                            <div class="circle" :class="{ completed: currentOrder.hasPaid }"></div>
+                                            <span>买家已付款</span>
+                                        </div>
+                                        <div class="progress-step">
+                                            <div class="circle" :class="{ completed: currentOrder.hasShipped }"></div>
+                                            <span>卖家已发货</span>
+                                        </div>
+                                        <div class="progress-step">
+                                            <div class="circle" :class="{ completed: currentOrder.hasReceived }"></div>
+                                            <span>买家已收货</span>
+                                        </div>
+                                        <div class="line-container">
+                                            <div class="line" :class="{ completed: currentOrder.hasPaid && currentOrder.hasShipped }"></div>
+                                            <div class="line" :class="{ completed: currentOrder.hasShipped && currentOrder.hasReceived }"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

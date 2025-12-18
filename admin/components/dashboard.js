@@ -109,12 +109,14 @@ const DashboardComponent = {
             const products = JSON.parse(localStorage.getItem('products')) || [];
             const users = JSON.parse(localStorage.getItem('users')) || [];
             const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            const purchaseRecords = JSON.parse(localStorage.getItem('purchaseRecords')) || [];
             const browses = JSON.parse(localStorage.getItem('browses')) || [];
 
             // 计算统计数据
             this.stats.products = products.length;
             this.stats.users = users.length;
-            this.stats.orders = orders.length;
+            // 订单总数 = 传统订单数 + 用户购买记录数
+            this.stats.orders = orders.length + purchaseRecords.length;
             this.stats.browses = browses.length;
         },
         // 加载最新商品
@@ -127,9 +129,41 @@ const DashboardComponent = {
         },
         // 加载最新订单
         loadLatestOrders() {
+            let allOrders = [];
+            
+            // 1. 从传统orders键获取订单
             const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            allOrders = [...orders];
+            
+            // 2. 从purchaseRecords键获取正在进行的用户订单
+            const purchaseRecords = JSON.parse(localStorage.getItem('purchaseRecords')) || [];
+            
+            // 转换purchaseRecords为统一的订单格式
+            const userOrders = purchaseRecords.map(record => {
+                // 获取商品信息
+                const products = JSON.parse(localStorage.getItem('products')) || [];
+                const product = products.find(p => p.id === record.productId) || {};
+                
+                return {
+                    id: record.id,
+                    user: record.buyerName || '匿名用户',
+                    product: product.title || '未知商品',
+                    amount: product.price || 0,
+                    status: record.status || '待处理',
+                    createdAt: record.purchaseTime || Date.now(),
+                    buyerId: record.buyerId,
+                    sellerId: record.sellerId,
+                    hasPaid: record.hasPaid,
+                    hasShipped: record.hasShipped,
+                    hasReceived: record.hasReceived
+                };
+            });
+            
+            // 合并所有订单
+            allOrders = [...allOrders, ...userOrders];
+            
             // 按创建时间排序，取前5个
-            this.latestOrders = orders
+            this.latestOrders = allOrders
                 .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
                 .slice(0, 5);
         }
