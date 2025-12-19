@@ -5,6 +5,10 @@
 ## 技术栈
 - 前端：Vue.js、Bootstrap、JavaScript
 
+## 技术细节
+- 前端采用Vue.js框架，使用Bootstrap框架进行页面布局和样式设计
+- 前端页面均采用单页应用（SPA）架构，通过Vue.js的路由组件实现页面之间的切换
+
 ## 文件夹大致结构及各文件用途
 - `account`文件夹: 账号相关文件
     - `login.html`：登录页面
