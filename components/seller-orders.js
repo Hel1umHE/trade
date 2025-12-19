@@ -182,7 +182,7 @@ const SellerOrdersComponent = {
                             ...order,
                             productTitle: product.title || '未知商品',
                             productPrice: product.price || '¥0.00',
-                            productImage: product.image || 'https://dummyimage.com/300x200/000/fff'
+                            productImage: product.image || 'https://dummyimage.com/50x50/000/fff'
                         };
                     });
                 }

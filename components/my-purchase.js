@@ -241,7 +241,22 @@ const MyPurchaseComponent = {
                     }
                 } catch (error) {
                     console.error('更新购买记录失败:', error);
-                    alert('操作失败，请稍后重试');
+                    // 使用 Bootstrap 轻量弹框提示操作失败
+                    const toast = document.createElement('div');
+                    toast.className = 'toast align-items-center text-bg-danger border-0 position-fixed top-0 end-0 m-3';
+                    toast.setAttribute('role', 'alert');
+                    toast.setAttribute('aria-live', 'assertive');
+                    toast.setAttribute('aria-atomic', 'true');
+                    toast.innerHTML = `
+                        <div class="d-flex">
+                            <div class="toast-body">操作失败，请稍后重试</div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    `;
+                    document.body.appendChild(toast);
+                    const bsToast = new bootstrap.Toast(toast);
+                    bsToast.show();
+                    toast.addEventListener('hidden.bs.toast', () => toast.remove());
                 }
             }
 
@@ -272,12 +287,41 @@ const MyPurchaseComponent = {
                         localStorage.setItem('purchaseRecords', JSON.stringify(updatedRecords));
                         // 重新加载购买记录
                         this.loadPurchaseRecords();
-                        // 显示成功消息
-                        alert('订单已删除');
+                        // 使用 Bootstrap 轻量弹框提示删除成功
+                        const toast = document.createElement('div');
+                        toast.className = 'toast align-items-center text-bg-success border-0 position-fixed top-0 end-0 m-3';
+                        toast.setAttribute('role', 'alert');
+                        toast.setAttribute('aria-live', 'assertive');
+                        toast.setAttribute('aria-atomic', 'true');
+                        toast.innerHTML = `
+                            <div class="d-flex">
+                                <div class="toast-body">订单已删除</div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                            </div>
+                        `;
+                        document.body.appendChild(toast);
+                        const bsToast = new bootstrap.Toast(toast);
+                        bsToast.show();
+                        toast.addEventListener('hidden.bs.toast', () => toast.remove());
                     }
                 } catch (error) {
                     console.error('删除订单失败:', error);
-                    alert('删除订单失败，请稍后重试');
+                    // 使用 Bootstrap 轻量弹框提示删除失败
+                    const toast = document.createElement('div');
+                    toast.className = 'toast align-items-center text-bg-danger border-0 position-fixed top-0 end-0 m-3';
+                    toast.setAttribute('role', 'alert');
+                    toast.setAttribute('aria-live', 'assertive');
+                    toast.setAttribute('aria-atomic', 'true');
+                    toast.innerHTML = `
+                        <div class="d-flex">
+                            <div class="toast-body">删除订单失败，请稍后重试</div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    `;
+                    document.body.appendChild(toast);
+                    const bsToast = new bootstrap.Toast(toast);
+                    bsToast.show();
+                    toast.addEventListener('hidden.bs.toast', () => toast.remove());
                 }
             }
         },
@@ -313,13 +357,42 @@ const MyPurchaseComponent = {
                             this.loadPurchaseRecords();
                             // 关闭模态框
                             this.showProgressModal = false;
-                            // 显示成功消息
-                            alert('交易已取消');
+                            // 使用 Bootstrap 轻量弹框提示取消成功
+                            const toast = document.createElement('div');
+                            toast.className = 'toast align-items-center text-bg-success border-0 position-fixed top-0 end-0 m-3';
+                            toast.setAttribute('role', 'alert');
+                            toast.setAttribute('aria-live', 'assertive');
+                            toast.setAttribute('aria-atomic', 'true');
+                            toast.innerHTML = `
+                                <div class="d-flex">
+                                    <div class="toast-body">交易已取消</div>
+                                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                                </div>
+                            `;
+                            document.body.appendChild(toast);
+                            const bsToast = new bootstrap.Toast(toast);
+                            bsToast.show();
+                            toast.addEventListener('hidden.bs.toast', () => toast.remove());
                         }
                     }
                 } catch (error) {
                     console.error('取消交易失败:', error);
-                    alert('取消交易失败，请稍后重试');
+                    // 使用 Bootstrap 轻量弹框提示取消失败
+                    const toast = document.createElement('div');
+                    toast.className = 'toast align-items-center text-bg-danger border-0 position-fixed top-0 end-0 m-3';
+                    toast.setAttribute('role', 'alert');
+                    toast.setAttribute('aria-live', 'assertive');
+                    toast.setAttribute('aria-atomic', 'true');
+                    toast.innerHTML = `
+                        <div class="d-flex">
+                            <div class="toast-body">取消交易失败，请稍后重试</div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    `;
+                    document.body.appendChild(toast);
+                    const bsToast = new bootstrap.Toast(toast);
+                    bsToast.show();
+                    toast.addEventListener('hidden.bs.toast', () => toast.remove());
                 }
             }
         },

@@ -19,6 +19,7 @@ const PublishComponent = {
                 <div class="mb-3">
                     <label for="productImage" class="form-label">商品图片</label>
                     <input type="file" class="form-control" id="productImage" accept="image/*" @change="handleImageUpload" required>
+                    <div class="form-text">请上传商品图片（最大文件大小为3MB）</div>
                     <div class="mt-2" v-if="product.image">
                         <img :src="product.image" alt="商品预览" class="img-thumbnail" style="max-width: 200px;">
                     </div>
@@ -98,7 +99,24 @@ const PublishComponent = {
                 localStorage.setItem('products', JSON.stringify(products));
 
                 // 显示成功提示
-                alert('商品发布成功！');
+                // 使用 Bootstrap Toast 显示成功提示
+                const toastHtml = `
+                    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+                        <div class="toast-header">
+                            <strong class="me-auto">提示</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="关闭"></button>
+                        </div>
+                        <div class="toast-body">商品发布成功！</div>
+                    </div>
+                `;
+                // 将 Toast 插入页面
+                const toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                toastContainer.innerHTML = toastHtml;
+                document.body.appendChild(toastContainer);
+                // 初始化并显示 Toast
+                const toast = new bootstrap.Toast(toastContainer.querySelector('.toast'));
+                toast.show();
 
                 // 跳转到首页
                 this.$router.push('/home');
