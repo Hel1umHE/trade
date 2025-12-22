@@ -42,7 +42,7 @@ const SellerOrdersComponent = {
                                         <td>
                                             <span class="badge" :class="getStatusClass(order.status)">{{ order.status }}</span>
                                         </td>
-                                        <td>{{ formatDate(order.createdAt) }}</td>
+                                        <td>{{ formatDate(order.purchaseTime) }}</td>
                                         <td>
                                             <button class="btn btn-sm btn-info" @click="showTradeProgress(order)">查看详情</button>
                                             <button class="btn btn-sm btn-danger ml-1" @click="deleteOrder(order)">删除订单</button>
