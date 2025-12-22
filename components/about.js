@@ -24,9 +24,9 @@ const AboutComponent = {
                         <h5 class="card-title mt-4">联系方式</h5>
                         <p class="card-text">如有问题或建议，请通过以下方式联系我们：</p>
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item">📧 邮箱：contact@campustrade.com</li>
-                            <li class="list-group-item">🐙 GitCode：<a href="https://gitcode.com/Hel1um_HE/trade_platform" target="_blank">校园交易平台</a></li>
-                            <li class="list-group-item">💬 反馈：在GitCode仓库提交Issue</li>
+                            <li class="list-group-item">邮箱：contact@campustrade.com</li>
+                            <li class="list-group-item">GitCode：<a href="https://gitcode.com/Hel1um_HE/trade_platform" target="_blank">校园交易平台</a></li>
+                            <li class="list-group-item">反馈：在GitCode仓库提交Issue</li>
                         </ul>
                         
                     </div>
