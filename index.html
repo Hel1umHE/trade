@@ -365,10 +365,13 @@
                     发布商品
                 </button>
                 <div class="mt-auto pt-3 border-top border-white border-opacity-25">
-                    <router-link to="/about" class="nav-link text-white text-opacity-75" style="font-size: 14px;"><i
-                            class="bi bi-info-circle me-2"></i>关于页面</router-link>
-                    <a href="https://gitcode.com/Hel1um_HE/trade_platform" target="_blank"
-                        class="nav-link text-white text-opacity-75" style="font-size: 14px;">GitCode仓库</a>
+                    <router-link to="/about" class="nav-link text-white text-opacity-75" style="font-size: 14px;">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        关于页面
+                    </router-link>
+                    <a href="https://gitcode.com/Hel1um_HE/trade_platform" target="_blank" class="nav-link text-white text-opacity-75" style="font-size: 14px;">
+                        GitCode仓库
+                    </a>
                 </div>
             </nav>
         </div>
@@ -378,7 +381,7 @@
             <!-- 头部 -->
             <div class="header">
                 <div class="search-box">
-                    <input type="text" class="form-control" placeholder="搜索商品..." v-model="searchKeyword" @input="handleSearch" @keyup.enter="handleSearch" autocomplete="off">
+                    <input type="text" class="form-control shadow-sm" placeholder="搜索商品..." v-model="searchKeyword" @input="handleSearch" @keyup.enter="handleSearch" autocomplete="off">
                 </div>
                 <div class="avatar" @click="goToMy">
                     {{ userInfo ? userInfo.nickname.charAt(0) : '头' }}
