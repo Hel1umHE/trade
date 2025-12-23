@@ -51,7 +51,7 @@ git clone git@gitcode.com:Hel1um_HE/trade_platform.git
 或者   
 右上角“下载Zip”之后解压
 ## 运行项目
-在clone本仓库之后，双击打开项目文件夹，找到`index.html`文件，用浏览器打开即可。
+在clone本仓库之后，双击打开项目文件夹，找到文件夹根目录下的`index.html`文件，用浏览器打开即可。
 
 ## 已知问题
 1. 私聊相关逻辑未编写 
