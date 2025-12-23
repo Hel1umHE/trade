@@ -269,12 +269,12 @@
         .page-transition-leave-active {
             transition: all 0.3s ease;
         }
-        
+
         .page-transition-enter-from {
             opacity: 0;
             transform: translateY(20px);
         }
-        
+
         .page-transition-leave-to {
             opacity: 0;
             transform: translateY(-20px);
@@ -283,10 +283,10 @@
         /* 淡入淡出效果 */
         .fade-enter-active,
         .fade-leave-active {
-            transition: opacity 0.5s ease;
+            transition: opacity 0.3s ease;
         }
 
-        .fade-enter-from,
+        .fade-enter,
         .fade-leave-to {
             opacity: 0;
         }
@@ -315,10 +315,14 @@
         <div class="sidebar col-md-2" style="width: 250px;">
             <h3>校园交易平台</h3>
             <nav class="nav flex-column">
-                <router-link to="/home" class="nav-link" active-class="active"><i
-                        class="bi bi-house-fill me-2"></i>首页</router-link>
-                <router-link to="/chat" class="nav-link" active-class="active"><i
-                        class="bi bi-chat-dots-fill me-2"></i>私聊</router-link>
+                <router-link to="/home" class="nav-link" active-class="active">
+                    <i class="bi bi-house-fill me-2"></i>
+                    首页
+                </router-link>
+                <router-link to="/chat" class="nav-link" active-class="active">
+                    <i class="bi bi-chat-dots-fill me-2"></i>
+                    私聊
+                </router-link>
                 <div @click="toggleMyMenu"
                     class="nav-link cursor-pointer d-flex justify-content-between align-items-center"
                     :class="{ active: $route.path === '/my' || $route.path.startsWith('/my-') }">
@@ -332,16 +336,34 @@
                         </span>
                     </span>
                 </div>
-                <div class="sub-nav ml-3 mt-1" v-if="isMyMenuOpen">
-                    <router-link to="/my" class="nav-link" active-class="active">个人信息</router-link>
-                    <router-link to="/my-products" class="nav-link" active-class="active">我的商品</router-link>
-                    <router-link to="/my-purchase" class="nav-link" active-class="active">购买记录</router-link>
-                    <router-link to="/my-browse" class="nav-link" active-class="active">浏览记录</router-link>
-                </div>
-                <router-link to="/seller-orders" class="nav-link" active-class="active"><i
-                        class="bi bi-clipboard-fill me-2"></i>卖家订单</router-link>
-                <button class="btn btn-primary publish-btn mt-3" @click="goToPublish"><i
-                        class="bi bi-upload me-2"></i>发布商品</button>
+                <transition name="fade">
+                    <div class="sub-nav ml-3 mt-1" v-if="isMyMenuOpen">
+                        <router-link to="/my" class="nav-link" active-class="active">
+                            <i class="bi bi-person-badge me-2"></i>
+                            个人信息
+                        </router-link>
+                        <router-link to="/my-products" class="nav-link" active-class="active">
+                            <i class="bi bi-box-seam-fill me-2"></i>
+                            我的商品
+                        </router-link>
+                        <router-link to="/my-purchase" class="nav-link" active-class="active">
+                            <i class="bi bi-bag-check-fill me-2"></i>
+                            购买记录
+                        </router-link>
+                        <router-link to="/my-browse" class="nav-link" active-class="active">
+                            <i class="bi bi-clock-history me-2"></i>
+                            浏览记录
+                        </router-link>
+                    </div>
+                </transition>
+                <router-link to="/seller-orders" class="nav-link" active-class="active">
+                    <i class="bi bi-clipboard-fill me-2"></i>
+                    卖家订单
+                </router-link>
+                <button class="btn btn-primary publish-btn mt-3" @click="goToPublish">
+                    <i class="bi bi-upload me-2"></i>
+                    发布商品
+                </button>
                 <div class="mt-auto pt-3 border-top border-white border-opacity-25">
                     <router-link to="/about" class="nav-link text-white text-opacity-75" style="font-size: 14px;"><i
                             class="bi bi-info-circle me-2"></i>关于页面</router-link>
@@ -356,8 +378,7 @@
             <!-- 头部 -->
             <div class="header">
                 <div class="search-box">
-                    <input type="text" class="form-control" placeholder="搜索商品..." v-model="searchKeyword"
-                        @input="handleSearch" @keyup.enter="handleSearch">
+                    <input type="text" class="form-control" placeholder="搜索商品..." v-model="searchKeyword" @input="handleSearch" @keyup.enter="handleSearch" autocomplete="off">
                 </div>
                 <div class="avatar" @click="goToMy">
                     {{ userInfo ? userInfo.nickname.charAt(0) : '头' }}

@@ -9,7 +9,7 @@ const EditProfileComponent = {
                         <form @submit.prevent="updateProfile">
                             <div class="mb-3">
                                 <label for="nickname" class="form-label">昵称</label>
-                                <input type="text" class="form-control" id="nickname" v-model="userForm.nickname" required maxlength="20">
+                                <input type="text" class="form-control" id="nickname" v-model="userForm.nickname" autocomplete="off" required maxlength="20">
                             </div>
                             <div class="mb-3">
                                 <label for="realName" class="form-label">真实姓名</label>

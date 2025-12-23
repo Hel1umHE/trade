@@ -66,7 +66,7 @@ const ChatComponent = {
                         </div>
                     </div>
                     <div class="chat-input">
-                        <input type="text" class="form-control" placeholder="输入消息...">
+                        <input type="text" class="form-control" placeholder="输入消息..." autocomplete="off">
                         <button class="btn btn-primary">发送</button>
                     </div>
                 </div>

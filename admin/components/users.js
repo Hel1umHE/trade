@@ -6,7 +6,7 @@ const UsersComponent = {
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5>用户列表</h5>
                     <div class="input-group" style="width: 300px;">
-                        <input type="text" class="form-control" placeholder="搜索用户..." v-model="searchKeyword">
+                        <input type="text" class="form-control" placeholder="搜索用户..." v-model="searchKeyword" autocomplete="off">
                         <button class="btn btn-primary" @click="searchUsers">搜索</button>
                     </div>
                 </div>

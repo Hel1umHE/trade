@@ -6,15 +6,15 @@ const PublishComponent = {
             <form class="mt-4" @submit.prevent="publishProduct">
                 <div class="mb-3">
                     <label for="productName" class="form-label">商品名称</label>
-                    <input type="text" class="form-control" id="productName" v-model="product.title" placeholder="请输入商品名称" required>
+                    <input type="text" class="form-control" id="productName" v-model="product.title" placeholder="请输入商品名称" autocomplete="off" required>
                 </div>
                 <div class="mb-3">
                     <label for="productPrice" class="form-label">商品价格</label>
-                    <input type="number" class="form-control" id="productPrice" v-model.number="product.price" placeholder="请输入商品价格" required step="0.01">
+                    <input type="number" class="form-control" id="productPrice" v-model.number="product.price" placeholder="请输入商品价格" autocomplete="off" required step="0.01">
                 </div>
                 <div class="mb-3">
                     <label for="productDescription" class="form-label">商品描述</label>
-                    <textarea class="form-control" id="productDescription" v-model="product.description" rows="3" placeholder="请输入商品描述" required></textarea>
+                    <textarea class="form-control" id="productDescription" v-model="product.description" rows="3" placeholder="请输入商品描述" autocomplete="off" required></textarea>
                 </div>
                 <div class="mb-3">
                     <label for="productImage" class="form-label">商品图片</label>
