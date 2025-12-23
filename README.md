@@ -46,7 +46,7 @@
 
 ## 下载项目
 ```bash
-git clone https://gitcode.com/Hel1um_HE/trade_platform.git
+git clone git@gitcode.com:Hel1um_HE/trade_platform.git
 ```
 或者   
 右上角“下载Zip”之后解压
