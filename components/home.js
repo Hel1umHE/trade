@@ -5,6 +5,10 @@ const HomeComponent = {
             <h4>首页</h4>
             <p>欢迎来到校园交易平台首页！</p>
             <div class="row mt-4">
+            <!-- 无商品提示 -->
+            <div v-if="products.length === 0 && !searchKeyword" class="col-12 text-center py-5">
+                <p class="text-muted">暂无商品</p>
+            </div>
                 <!-- 商品卡片 -->
                 <div class="col-md-4" v-for="product in filteredProducts" :key="product.id">
                     <div class="product-card">
@@ -21,7 +25,7 @@ const HomeComponent = {
                     </div>
                 </div>
                 <!-- 无搜索结果提示 -->
-                <div v-if="filteredProducts.length === 0" class="col-12 text-center py-5">
+                <div v-if="filteredProducts.length === 0 && searchKeyword" class="col-12 text-center py-5">
                     <p class="text-muted">未找到相关商品</p>
                 </div>
             </div>
@@ -42,8 +46,8 @@ const HomeComponent = {
             const keyword = this.searchKeyword.toLowerCase();
             return this.products.filter(product => {
                 return product.title.toLowerCase().includes(keyword) ||
-                       product.description.toLowerCase().includes(keyword) ||
-                       product.sellerName.toLowerCase().includes(keyword);
+                    product.description.toLowerCase().includes(keyword) ||
+                    product.sellerName.toLowerCase().includes(keyword);
             });
         }
     },

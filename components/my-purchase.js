@@ -164,15 +164,15 @@ const MyPurchaseComponent = {
                     const storedProducts = localStorage.getItem('products');
                     const allProducts = storedProducts ? JSON.parse(storedProducts) : [];
 
-                    // 为每条购买记录补充完整商品信息
+                    // 为每条购买记录补充完整商品信息，优先使用购买记录中保存的商品信息
                     this.purchaseRecords = userRecords.map(record => {
                         const product = allProducts.find(p => p.id === record.productId) || {};
-                        // 合并购买记录和商品信息
+                        // 合并购买记录和商品信息，优先使用订单中已保存的商品信息
                         return {
                             ...record,
-                            productTitle: product.title || '未知商品',
-                            productPrice: product.price || '¥0.00',
-                            productImage: product.image || 'https://dummyimage.com/300x200/000/fff'
+                            productTitle: record.productTitle || product.title || '未知商品',
+                            productPrice: record.productPrice || product.price || '¥0.00',
+                            productImage: record.productImage || product.image || 'https://dummyimage.com/300x200/000/fff'
                         };
                     });
                 }
@@ -220,7 +220,7 @@ const MyPurchaseComponent = {
                     let records = JSON.parse(storedRecords);
                     const index = records.findIndex(r => r.id === record.id);
                     if (index !== -1) {
-                        // 只保存必要的字段回localStorage，避免冗余数据
+                        // 更新购买记录，包含商品信息
                         const updatedRecord = {
                             id: record.id,
                             productId: record.productId,
@@ -232,7 +232,11 @@ const MyPurchaseComponent = {
                             hasPaid: record.hasPaid,
                             hasShipped: record.hasShipped,
                             hasReceived: record.hasReceived,
-                            status: record.status
+                            status: record.status,
+                            // 保留商品信息，防止商品删除后订单显示异常
+                            productTitle: record.productTitle,
+                            productPrice: record.productPrice,
+                            productImage: record.productImage
                         };
                         records[index] = updatedRecord;
                         localStorage.setItem('purchaseRecords', JSON.stringify(records));
@@ -398,14 +402,24 @@ const MyPurchaseComponent = {
         },
         getStatusClass(status) {
             switch (status) {
+                case '待处理':
+                case '进行中':
                 case '待付款':
+                case '未付款':
                     return 'bg-warning text-dark';
                 case '已付款，待发货':
+                case '已付款未发货':
                     return 'bg-info text-white';
+                case '已发货':
                 case '已发货，待收货':
+                case '已发货未收到货':
                     return 'bg-primary text-white';
+                case '已收货':
+                    return 'bg-success text-white';
+                case '已完成':
                 case '交易完成':
                     return 'bg-success text-white';
+                case '已取消':
                 case '交易取消':
                     return 'bg-danger text-white';
                 default:

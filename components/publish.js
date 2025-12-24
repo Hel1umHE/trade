@@ -18,7 +18,7 @@ const PublishComponent = {
                 </div>
                 <div class="mb-3">
                     <label for="productImage" class="form-label">商品图片</label>
-                    <input type="file" class="form-control" id="productImage" accept="image/*" @change="handleImageUpload" required>
+                    <input type="file" class="form-control shadow-none" id="productImage" accept="image/*" @change="handleImageUpload" required>
                     <div class="form-text">请上传商品图片（最大文件大小为3MB）</div>
                     <div class="mt-2" v-if="product.image">
                         <img :src="product.image" alt="商品预览" class="img-thumbnail" style="max-width: 200px;">

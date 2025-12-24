@@ -36,7 +36,7 @@ const OrdersComponent = {
                             <td>{{ formatDate(order.createdAt) }}</td>
                             <td>
                                 <select class="form-select form-select-sm" v-model="order.status" @change="updateOrderStatus(order)">
-                                    <option value="未付款">未付款</option>
+                                    <option value="待付款">待付款</option>
                                     <option value="已付款未发货">已付款未发货</option>
                                     <option value="已发货未收到货">已发货未收到货</option>
                                     <option value="已收货">已收货</option>
@@ -256,24 +256,26 @@ const OrdersComponent = {
             switch (status) {
                 case '待处理':
                 case '进行中':
+                case '待付款':
                 case '未付款':
                     return 'bg-warning text-dark';
+                case '已付款，待发货':
+                case '已付款未发货':
+                    return 'bg-info text-white';
                 case '已发货':
                 case '已发货，待收货':
                 case '已发货未收到货':
-                    return 'bg-primary';
-                case '已完成':
+                    return 'bg-primary text-white';
                 case '已收货':
+                    return 'bg-success text-white';
+                case '已完成':
                 case '交易完成':
-                    return 'bg-success';
+                    return 'bg-success text-white';
                 case '已取消':
                 case '交易取消':
-                    return 'bg-secondary';
-                case '已付款，待发货':
-                case '已付款未发货':
-                    return 'bg-info';
+                    return 'bg-danger text-white';
                 default:
-                    return 'bg-info';
+                    return 'bg-secondary text-white';
             }
         },
         // 格式化日期

@@ -174,15 +174,15 @@ const SellerOrdersComponent = {
                     const storedProducts = localStorage.getItem('products');
                     const allProducts = storedProducts ? JSON.parse(storedProducts) : [];
 
-                    // 为每条订单补充完整商品信息
+                    // 为每条订单补充完整商品信息，优先使用购买记录中保存的商品信息
                     this.sellerOrders = sellerRecords.map(order => {
                         const product = allProducts.find(p => p.id === order.productId) || {};
-                        // 合并订单和商品信息
+                        // 合并订单和商品信息，优先使用订单中已保存的商品信息
                         return {
                             ...order,
-                            productTitle: product.title || '未知商品',
-                            productPrice: product.price || '¥0.00',
-                            productImage: product.image || 'https://dummyimage.com/50x50/000/fff'
+                            productTitle: order.productTitle || product.title || '未知商品',
+                            productPrice: order.productPrice || product.price || '¥0.00',
+                            productImage: order.productImage || product.image || 'https://dummyimage.com/50x50/000/fff'
                         };
                     });
                 }
@@ -217,7 +217,7 @@ const SellerOrdersComponent = {
                     let records = JSON.parse(storedRecords);
                     const index = records.findIndex(r => r.id === order.id);
                     if (index !== -1) {
-                        // 只保存必要的字段回localStorage，避免冗余数据
+                        // 更新订单，包含商品信息
                         const updatedOrder = {
                             id: order.id,
                             productId: order.productId,
@@ -229,14 +229,38 @@ const SellerOrdersComponent = {
                             hasPaid: order.hasPaid,
                             hasShipped: order.hasShipped,
                             hasReceived: order.hasReceived,
-                            status: order.status
+                            status: order.status,
+                            // 保留商品信息，防止商品删除后订单显示异常
+                            productTitle: order.productTitle,
+                            productPrice: order.productPrice,
+                            productImage: order.productImage
                         };
                         records[index] = updatedOrder;
                         localStorage.setItem('purchaseRecords', JSON.stringify(records));
                         // 重新加载订单
                         this.loadSellerOrders();
                         // 显示成功消息
-                        alert('操作成功！');
+                        // 使用 Bootstrap Toast 显示成功提示
+                        const toastHtml = `
+                            <div class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                                <div class="d-flex">
+                                    <div class="toast-body">操作成功！</div>
+                                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                </div>
+                            </div>
+                        `;
+                        // 将 Toast 插入到页面
+                        const toastContainer = document.createElement('div');
+                        toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                        toastContainer.innerHTML = toastHtml;
+                        document.body.appendChild(toastContainer);
+                        // 初始化并显示 Toast
+                        const toast = new bootstrap.Toast(toastContainer.querySelector('.toast'));
+                        toast.show();
+                        // Toast 隐藏后移除 DOM
+                        toastContainer.querySelector('.toast').addEventListener('hidden.bs.toast', () => {
+                            toastContainer.remove();
+                        });
                     }
                 } catch (error) {
                     console.error('更新订单失败:', error);
@@ -324,14 +348,24 @@ const SellerOrdersComponent = {
         },
         getStatusClass(status) {
             switch (status) {
+                case '待处理':
+                case '进行中':
                 case '待付款':
+                case '未付款':
                     return 'bg-warning text-dark';
                 case '已付款，待发货':
+                case '已付款未发货':
                     return 'bg-info text-white';
+                case '已发货':
                 case '已发货，待收货':
+                case '已发货未收到货':
                     return 'bg-primary text-white';
+                case '已收货':
+                    return 'bg-success text-white';
+                case '已完成':
                 case '交易完成':
                     return 'bg-success text-white';
+                case '已取消':
                 case '交易取消':
                     return 'bg-danger text-white';
                 default:

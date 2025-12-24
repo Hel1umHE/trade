@@ -148,7 +148,7 @@ const ProductComponent = {
                 }
                 const userInfo = JSON.parse(storedUser);
 
-                // 简化购买记录结构，只存储必要信息
+                // 创建购买记录，包含完整商品信息
                 const purchaseRecord = {
                     id: Date.now() + Math.floor(Math.random() * 1000),
                     productId: this.product.id,
@@ -161,7 +161,11 @@ const ProductComponent = {
                     hasPaid: false,       // 买家是否已付款
                     hasShipped: false,    // 卖家是否已发货
                     hasReceived: false,   // 买家是否已收货
-                    status: "待付款"
+                    status: "待付款",
+                    // 保存完整商品信息，防止商品删除后订单显示异常
+                    productTitle: this.product.title,
+                    productPrice: this.product.price,
+                    productImage: this.product.image
                 };
 
                 // 获取现有购买记录

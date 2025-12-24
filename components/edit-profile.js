@@ -13,15 +13,15 @@ const EditProfileComponent = {
                             </div>
                             <div class="mb-3">
                                 <label for="realName" class="form-label">真实姓名</label>
-                                <input type="text" class="form-control" id="realName" v-model="userForm.realName" readonly>
+                                <input type="text" class="form-control shadow-none" id="realName" v-model="userForm.realName" readonly>
                             </div>
                             <div class="mb-3">
                                 <label for="className" class="form-label">班级</label>
-                                <input type="text" class="form-control" id="className" v-model="userForm.className" readonly>
+                                <input type="text" class="form-control shadow-none" id="className" v-model="userForm.className" readonly>
                             </div>
                             <div class="mb-3">
                                 <label for="studentID" class="form-label">学号</label>
-                                <input type="text" class="form-control" id="studentID" v-model="userForm.studentID" readonly>
+                                <input type="text" class="form-control shadow-none" id="studentID" v-model="userForm.studentID" readonly>
                             </div>
                             <button type="submit" class="btn btn-primary">确认修改</button>
                             <button type="button" class="btn btn-secondary ms-2" @click="goBack">返回</button>
