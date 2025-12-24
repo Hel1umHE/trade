@@ -4,26 +4,22 @@ const ChangePasswordComponent = {
         <div>
             <h4>修改密码</h4>
             <div class="mt-4">
-                <div class="card">
-                    <div class="card-body">
-                        <form @submit.prevent="changePassword">
-                            <div class="mb-3">
-                                <label for="oldPassword" class="form-label">当前密码</label>
-                                <input type="password" class="form-control" id="oldPassword" v-model="oldPassword" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="newPassword" class="form-label">新密码</label>
-                                <input type="password" class="form-control" id="newPassword" v-model="newPassword" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="confirmPassword" class="form-label">确认新密码</label>
-                                <input type="password" class="form-control" id="confirmPassword" v-model="confirmPassword" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">确认修改</button>
-                            <button type="button" class="btn btn-secondary ms-2" @click="goBack">返回</button>
-                        </form>
+                <form @submit.prevent="changePassword">
+                    <div class="mb-3">
+                        <label for="oldPassword" class="form-label">当前密码</label>
+                        <input type="password" class="form-control" id="oldPassword" v-model="oldPassword" required>
                     </div>
-                </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">新密码</label>
+                        <input type="password" class="form-control" id="newPassword" v-model="newPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">确认新密码</label>
+                        <input type="password" class="form-control" id="confirmPassword" v-model="confirmPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">确认修改</button>
+                    <button type="button" class="btn btn-secondary ms-2" @click="goBack">返回</button>
+                </form>
             </div>
         </div>
     `,
