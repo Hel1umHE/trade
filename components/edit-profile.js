@@ -23,6 +23,9 @@ const EditProfileComponent = {
                                 <label for="studentID" class="form-label">学号</label>
                                 <input type="text" class="form-control shadow-none" id="studentID" v-model="userForm.studentID" readonly>
                             </div>
+                            <div class="mb-2 mt-3 text-muted">
+                                若需修改姓名、班级、学号，请联系管理员
+                            </div>
                             <button type="submit" class="btn btn-primary">确认修改</button>
                             <button type="button" class="btn btn-secondary ms-2" @click="goBack">返回</button>
                         </form>

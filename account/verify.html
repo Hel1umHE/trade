@@ -60,6 +60,10 @@
                                 <div v-if="errors.studentID" class="text-danger mt-1 small">{{ errors.studentID }}</div>
                             </div>
 
+                            <div class="mb-3 text-danger fw-bold text-center">
+                                姓名、班级、学号一旦提交，将无法修改！请慎重填写
+                            </div>
+
                             <button type="submit" class="btn btn-primary w-100" :disabled="loading">
                                 <span v-if="loading" class="spinner-border spinner-border-sm" role="status"
                                     aria-hidden="true"></span>
