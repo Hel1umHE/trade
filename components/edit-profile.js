@@ -4,33 +4,29 @@ const EditProfileComponent = {
         <div>
             <h4>修改个人信息</h4>
             <div class="mt-4">
-                <div class="card">
-                    <div class="card-body">
-                        <form @submit.prevent="updateProfile">
-                            <div class="mb-3">
-                                <label for="nickname" class="form-label">昵称</label>
-                                <input type="text" class="form-control" id="nickname" v-model="userForm.nickname" autocomplete="off" required maxlength="20">
-                            </div>
-                            <div class="mb-3">
-                                <label for="realName" class="form-label">真实姓名</label>
-                                <input type="text" class="form-control shadow-none" id="realName" v-model="userForm.realName" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="className" class="form-label">班级</label>
-                                <input type="text" class="form-control shadow-none" id="className" v-model="userForm.className" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="studentID" class="form-label">学号</label>
-                                <input type="text" class="form-control shadow-none" id="studentID" v-model="userForm.studentID" readonly>
-                            </div>
-                            <div class="mb-2 mt-3 text-muted">
-                                若需修改姓名、班级、学号，请联系管理员
-                            </div>
-                            <button type="submit" class="btn btn-primary">确认修改</button>
-                            <button type="button" class="btn btn-secondary ms-2" @click="goBack">返回</button>
-                        </form>
+                <form @submit.prevent="updateProfile">
+                    <div class="mb-3">
+                        <label for="nickname" class="form-label">昵称</label>
+                        <input type="text" class="form-control" id="nickname" v-model="userForm.nickname" autocomplete="off" required maxlength="20">
                     </div>
-                </div>
+                    <div class="mb-3">
+                        <label for="realName" class="form-label">真实姓名</label>
+                        <input type="text" class="form-control shadow-none" id="realName" v-model="userForm.realName" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="className" class="form-label">班级</label>
+                        <input type="text" class="form-control shadow-none" id="className" v-model="userForm.className" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="studentID" class="form-label">学号</label>
+                        <input type="text" class="form-control shadow-none" id="studentID" v-model="userForm.studentID" readonly>
+                    </div>
+                    <div class="mb-2 mt-3 text-muted">
+                        若需修改姓名、班级、学号，请联系管理员
+                    </div>
+                    <button type="submit" class="btn btn-primary">确认修改</button>
+                    <button type="button" class="btn btn-secondary ms-2" @click="goBack">返回</button>
+                </form>
             </div>
         </div>
     `,
